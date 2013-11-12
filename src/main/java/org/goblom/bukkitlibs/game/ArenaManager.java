@@ -50,6 +50,7 @@ import org.goblom.bukkitlibs.game.ArenaManager.ArenaData.*; //Import Myself?
  * custom equipment for teams.
  *
  * @TODO - Implement Min/Max Players
+ * @TODO - Location Types
  * 
  * @author Goblom
  */
