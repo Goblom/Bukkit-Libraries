@@ -37,6 +37,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
+
+import org.goblom.bukkitlibs.game.ArenaManager.*; //Import Myself ?
+import org.goblom.bukkitlibs.game.ArenaManager.ArenaData.*; //Import Myself?
 
 /**
  * Arena Manager v0.1
@@ -45,14 +49,18 @@ import org.bukkit.plugin.Plugin;
  * mind. Arena Manager comes with Teams, Inventory saving/deleting/restoring and
  * custom equipment for teams.
  *
+ * @TODO - Implement Min/Max Players
+ * 
  * @author Goblom
  */
 public class ArenaManager {
 
     private Plugin plugin;
+    
     private Map<String, Arena> arenas = new HashMap();
     private Map<String, Team> teams = new HashMap();
-
+    private Map<Arena, BukkitTask> arenaTimers = new HashMap();
+    
     public ArenaManager(Plugin plugin) {
         this.plugin = plugin;
     }
@@ -64,17 +72,44 @@ public class ArenaManager {
     public Arena getArena(String arenaName) {
         return arenas.get(arenaName);
     }
-
-    public Arena createArena(String arenaName) {
-        Arena arena = new Arena(arenaName);
-        return arenas.put(arenaName, arena);
+    
+    public Arena getArena(Arena arena) {
+        return arenas.get(arena.getName());
     }
 
+    public Arena createArena(String arenaName) {
+        return arenas.put(arenaName, new Arena(arenaName));
+    }
+    
+    public Arena createArena(String arenaName, int maxPlayers) {
+        return arenas.put(arenaName, new Arena(arenaName, maxPlayers));
+    }
+    
+    public Arena createArena(String arenaName, int minPlayers, int maxPlayers) {
+        return arenas.put(arenaName, new Arena(arenaName, minPlayers, maxPlayers));
+    }
+    
+    public Arena createArena(String arenaName, ArenaHandler handler) {
+        return arenas.put(arenaName, new Arena(arenaName, handler));
+    }
+
+    public Arena createArena(String arenaName, int minPlayers, int maxPlayers, ArenaHandler handler) {
+        return arenas.put(arenaName, new Arena(arenaName, minPlayers, maxPlayers, handler));
+    }
+
+    public Map<String, Team> getTeams() {
+        return teams;
+    }
+    
+    public Team createTeam(String teamName, Arena arena, Location spawnLocation) {
+        return teams.put(teamName, new Team(teamName, arena, spawnLocation));
+    }
+    
     public class Arena implements Listener {
 
         private String arenaName;
         private int minPlayers, maxPlayers;
-        private ArenaData.ArenaPhase currentPhase;
+        private ArenaPhase currentPhase;
 
         private ArenaHandler handler;
         private List<String> players = new ArrayList<String>();
@@ -82,30 +117,40 @@ public class ArenaManager {
 
         private Map<String, PlayerInventory> playerInv = new HashMap();
 
-        private Map<ArenaData.LocationType, String> locationNames = new HashMap();
+        private Map<LocationType, String> locationNames = new HashMap();
         private Map<String, Location> locations = new HashMap();
         private List<String> locationsUsed = new ArrayList<String>();
 
+        private int timer;
+        private BukkitTask timerTask;
+        
         public Arena(String arenaName) {
-            this(arenaName, 1);
+            this(arenaName, 1, 1, null);
         }
 
         public Arena(String arenaName, int maxPlayers) {
             this(arenaName, 1, maxPlayers, null);
         }
 
+        public Arena(String arenaName, int minPlayers, int maxPlayers) {
+            this(arenaName, minPlayers, maxPlayers, null);
+        }
+        
         public Arena(String arenaName, ArenaHandler handler) {
             this(arenaName, 1, 1, handler);
         }
         
         public Arena(String arenaName, int minPlayers, int maxPlayers, ArenaHandler handler) {
-            this.currentPhase = ArenaData.ArenaPhase.SETUP;
+            craftEvent(ArenaPhase.CREATE, null);
+            preventItemLoss();
+            
             this.arenaName = arenaName;
             this.maxPlayers = maxPlayers;
             this.minPlayers = minPlayers;
 
             this.handler = handler;
             
+            load();
             plugin.getServer().getPluginManager().registerEvents(this, plugin);
         }
 
@@ -120,13 +165,30 @@ public class ArenaManager {
             this.locations = null;
             this.locationsUsed = null;
             this.handler = null;
+            this.timerTask = null;
         }
-
+        
+        protected final void load() {
+            craftEvent(ArenaPhase.LOAD, null);
+            handler.onLoad();
+        }
+        
+        public void start() {
+            craftEvent(ArenaPhase.GAME_START, currentPhase);
+            handler.start();
+        }
+        public void end() {
+            craftEvent(ArenaPhase.GAME_END, currentPhase);
+            handler.end();
+        }
+        
         public String getName() {
+            load();
             return arenaName;
         }
 
         public List<String> getPlayerList() {
+            load();
             return players;
         }
 
@@ -149,7 +211,7 @@ public class ArenaManager {
             return maxPlayers;
         }
 
-        public Map<ArenaData.LocationType, String> getLocationNames() {
+        public Map<LocationType, String> getLocationNames() {
             return locationNames;
         }
 
@@ -175,14 +237,14 @@ public class ArenaManager {
             }
         }
 
-        public void addLocation(ArenaData.LocationType locType, String locName, Location loc) {
+        public void addLocation(LocationType locType, String locName, Location loc) {
             locationNames.put(locType, locName);
             locations.put(locName, loc);
         }
 
-        public boolean remLocation(ArenaData.LocationType locType, String locName) {
+        public boolean remLocation(LocationType locType, String locName) {
             if (locationNames.containsKey(locType)) {
-                for (ArenaData.LocationType locTypes : locationNames.keySet()) {
+                for (LocationType locTypes : locationNames.keySet()) {
                     if (locTypes.equals(locType)) {
                         String keyName = locationNames.get(locType);
                         if (keyName.equals(locName) && locations.containsKey(locName)) {
@@ -230,9 +292,49 @@ public class ArenaManager {
             this.handler = handler;
         }
         
+        public int getTimer() {
+            return timer;
+        }
+        
+        public void setTimer(int time) {
+            this.timer = time;
+        }
+        
+        public boolean startTimer() {
+            if (timer == 0) return false;
+            if (timerTask != null) return false;
+            else if (timerTask == null) {
+                BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, new Runnable() { 
+                    public void run() {
+                        handler.end();
+                    }
+                }, timer);
+                
+                if (task != null) {
+                    arenaTimers.put(this, task);
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public boolean endTimer() {
+            if (timerTask != null) {
+                timerTask.cancel();
+                return true;
+            }
+            return false;
+        }
+        
+        protected final void craftEvent(ArenaPhase changedToPhase, ArenaPhase changedFromPhase) {
+            this.currentPhase = changedToPhase;
+            ArenaChangePhaseEvent acpe = new ArenaChangePhaseEvent(this, changedToPhase, changedFromPhase);
+            handler.onArenaPhaseChange(acpe);
+        }
+        
         @EventHandler
         void onFriendlyFire(EntityDamageByEntityEvent event) {
-            if ((currentPhase.equals(ArenaData.ArenaPhase.GAME_START)) || (currentPhase.equals(ArenaData.ArenaPhase.IN_SESSION))) {
+            if (currentPhase.equals(ArenaPhase.GAME_START)) {
                 Entity r = event.getDamager();
                 Entity d = event.getEntity();
 
@@ -247,6 +349,23 @@ public class ArenaManager {
                     }
                 }
             }
+        }
+        
+        private final void preventItemLoss() {
+            Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() { 
+                public void run() {
+                    for (Team team : teams) {
+                        for (String playerName : team.getPlayers()) {
+                            Player player = Bukkit.getPlayer(playerName);
+                            if (player != null) {
+                                PlayerInventory pi = player.getInventory();
+                                if (playerInv.containsKey(playerName)) playerInv.remove(playerName);
+                                playerInv.put(playerName, pi);
+                            }
+                        }
+                    }
+                }
+            }, 0L, 5);
         }
     }
 
@@ -360,11 +479,11 @@ public class ArenaManager {
     }
 
     public static class ArenaChangePhaseEvent {
-        private static Arena arena;
-        private static ArenaData.ArenaPhase currentPhase;
-        private static ArenaData.ArenaPhase previousPhase;
+        private final Arena arena;
+        private final ArenaPhase currentPhase;
+        private final ArenaPhase previousPhase;
         
-        public ArenaChangePhaseEvent(Arena arena, ArenaData.ArenaPhase changedToPhase, ArenaData.ArenaPhase changedFromPhase) {
+        public ArenaChangePhaseEvent(Arena arena, ArenaPhase changedToPhase, ArenaPhase changedFromPhase) {
             this.arena = arena;
             this.currentPhase = changedToPhase;
             this.previousPhase = changedFromPhase;
@@ -374,11 +493,11 @@ public class ArenaManager {
             return arena;
         }
         
-        public ArenaData.ArenaPhase getCurrentPhase() {
+        public ArenaPhase getCurrentPhase() {
             return currentPhase;
         }
         
-        public ArenaData.ArenaPhase getPreviousPhase() {
+        public ArenaPhase getPreviousPhase() {
             return previousPhase;
         }
     }
@@ -393,12 +512,10 @@ public class ArenaManager {
 
         public static enum ArenaPhase {
 
-            SETUP,
-            PRE_GAME,
+            CREATE,
+            LOAD,
             GAME_START,
-            IN_SESSION,
-            END_GAME,
-            POST_GAME
+            GAME_END
         }
         
         public interface ArenaHandlerInterface {
@@ -411,7 +528,7 @@ public class ArenaManager {
         }
     }
     
-    public abstract class ArenaHandler implements ArenaData.ArenaHandlerInterface {
+    public abstract class ArenaHandler implements ArenaHandlerInterface {
         private Arena arena;
         
         public ArenaHandler(Arena arena) {
