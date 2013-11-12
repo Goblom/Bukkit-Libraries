@@ -1,4 +1,4 @@
-package org.goblom.bukkitlibs;
+package org.goblom.bukkitlibs.item;
 
 import java.util.ArrayList;
 import java.util.Arrays;

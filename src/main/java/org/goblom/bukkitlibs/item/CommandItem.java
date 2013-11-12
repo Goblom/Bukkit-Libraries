@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.goblom.bukkitlibs;
+package org.goblom.bukkitlibs.item;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
