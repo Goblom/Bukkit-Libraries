@@ -120,6 +120,25 @@ public class ConfigManager {
     }
 
     /**
+     * Create YAML Comments at the given path
+     *
+     * @param fileName File to add comments to
+     * @param path Path to add comments too
+     * @param comments Comments to add
+     * 
+     * @deprecated Not Tested/Experimental
+     */
+    public void addComment(String fileName, String path, String... comments) {
+        if (isFileLoaded(fileName)) {
+            for (String comment : comments) {
+                if (!configs.get(fileName).contains(path)) {
+                    configs.get(fileName).set("_COMMENT_" + comments.length, " " + comment);
+                }
+            }
+        }
+    }
+
+    /**
      * Removes a path from the FileConfiguration.
      *
      * @param fileName File to update
