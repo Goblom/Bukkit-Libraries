@@ -191,6 +191,7 @@ public class CommandItem implements Listener {
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                     ItemStack handItem = event.getItem();
                     if (handItem.isSimilar(item)) {
+                        event.setCancelled(true);
                         UseEvent ue = new UseEvent(
                                 event.getPlayer(),
                                 event.getItem(),
