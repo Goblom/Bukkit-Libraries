@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.goblom.bukkitlibs;
 
 import org.bukkit.Bukkit;
@@ -30,50 +29,48 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Command Items. Creates any item with the ability to run a command from anywhere in a world.
- * This is a class file for my upcoming plugin CommandItems.
- * 
- * @warning This class is experimental and still in its planning stages. Please refrain from using it until further notice.
+ * Command Items. Creates any item with the ability to run a command from
+ * anywhere in a world. This is a class file for my upcoming plugin
+ * CommandItems.
+ *
+ * @warning This class is experimental and still in its planning stages. Please
+ * refrain from using it until further notice.
  * @author Goblom
  */
 public class CommandItem implements Listener {
 
     private ItemStack item;
-
     private String command;
 
     private Plugin plugin;
     private UseEventHandler handler;
-    private UseType useType;
 
     /**
      * Create Command Item
-     * 
+     *
      * @param item ItemStack that the Command Item is attached to
      * @param command Command that is attached to the ItemStack
      * @param handler Handler to get data from the CommandItem
-     * @param useType How the command is triggered
      * @param plugin Your plugin
      */
-    public CommandItem(ItemStack item, String command, UseEventHandler handler, UseType useType, Plugin plugin) {
+    public CommandItem(ItemStack item, String command, UseEventHandler handler, Plugin plugin) {
         this.item = item;
         this.command = command;
 
         this.plugin = plugin;
         this.handler = handler;
-        this.useType = useType;
-
-        new TypeEvents(this.useType);
+        
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**
      * Set the command for the command item
+     *
      * @param command command to set
      * @return Command Item
      */
@@ -84,6 +81,7 @@ public class CommandItem implements Listener {
 
     /**
      * Sets the ItemStack for the command item.
+     *
      * @param item itemstack to set
      * @return this
      */
@@ -94,6 +92,7 @@ public class CommandItem implements Listener {
 
     /**
      * gets the registered command
+     *
      * @return command
      */
     public String getCommand() {
@@ -102,6 +101,7 @@ public class CommandItem implements Listener {
 
     /**
      * gets the item stack
+     *
      * @return item
      */
     public ItemStack getItem() {
@@ -110,6 +110,7 @@ public class CommandItem implements Listener {
 
     /**
      * Perform the command for the given Command Item
+     *
      * @param player Player to perform the command
      */
     public void use(Player player) {
@@ -118,6 +119,7 @@ public class CommandItem implements Listener {
 
     /**
      * Give command item to a player.
+     *
      * @param player Player to give the command item to.
      */
     public void giveItem(Player player) {
@@ -136,6 +138,7 @@ public class CommandItem implements Listener {
     }
 
     public interface UseEventHandler {
+
         public void onUseEvent(UseEvent event);
     }
 
@@ -144,7 +147,6 @@ public class CommandItem implements Listener {
         private Player player;
         private ItemStack item;
 
-        private String name;
         private String command;
 
         private boolean destroy;
@@ -156,118 +158,75 @@ public class CommandItem implements Listener {
          */
         public UseEvent(Player player, ItemStack item, String command) {
             this.player = player;
-            this.name = name;
             this.item = item;
             this.command = command;
         }
 
+        /**
+         * Player involved in this event
+         * @return Player involved in event
+         */
         public Player getPlayer() {
             return player;
         }
 
-        public String getName() {
-            return name;
-        }
-
+        /**
+         * Gets command associated with the item
+         * @return Command to run
+         */
         public String getCommand() {
             return command;
         }
 
+        /**
+         * Gets the itemstack from this event
+         * @return ItemStack
+         */
         public ItemStack getItem() {
             return item;
         }
 
-        public void destroy() {
-            this.destroy = true;
+        /**
+         * Should we make the item act like a normal item now.
+         * @param destroy 
+         */
+        public void setWillDstroy(boolean destroy) {
+            this.destroy = destroy;
         }
 
+        /**
+         * Should we destroy the item?
+         * @return destroy
+         */
         public boolean willDestroy() {
             return destroy;
         }
-    }
-
-    public enum UseType {
-
-        InventoryClickEvent,
-        PlayerInteractEvent,
-        ALL
-    }
-
-    abstract class CommandItemListener implements Listener {
-
-        private Plugin plugin;
-
-        public CommandItemListener(Plugin plugin) {
-            this.plugin = plugin;
-            plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        
+        /**
+         * Run the command associated with this event
+         * @return true if successful, false if not
+         */
+        public boolean run() {
+            return player.performCommand(command);
         }
     }
 
-    class TypeEvents {
-
-        public TypeEvents(UseType type) {
-            if (type.equals(UseType.PlayerInteractEvent)) {
-                new PlayerInteract(plugin);
-            }
-            if (type.equals(UseType.InventoryClickEvent)) {
-                new InventoryClick(plugin);
-            }
-            if (type.equals(UseType.ALL)) {
-                new PlayerInteract(plugin);
-                new InventoryClick(plugin);
-            }
+    @EventHandler
+    void onPlayerInteract(PlayerInteractEvent event) {
+        if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+            return;
         }
-
-        class PlayerInteract extends CommandItemListener {
-
-            public PlayerInteract(Plugin plugin) {
-                super(plugin);
-            }
-            
-            @EventHandler
-            void onPlayerInteract(PlayerInteractEvent event) {
-                if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
-                if (event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                    ItemStack handItem = event.getItem();
-                    if (handItem.isSimilar(item)) {
-                        event.setCancelled(true);
-                        UseEvent ue = new UseEvent(
-                                event.getPlayer(),
-                                event.getItem(),
-                                command
-                        );
-                        handler.onUseEvent(ue);
-                    }
-                }
-            }
-        }
-
-        class InventoryClick extends CommandItemListener {
-
-            public InventoryClick(Plugin plugin) {
-                super(plugin);
-            }
-
-            @EventHandler
-            void onInventoryClick(final InventoryClickEvent event) {
-                if (event.getCursor().isSimilar(item)) {
-                    event.setCancelled(true);
-
-                    UseEvent ue = new UseEvent(
-                            (Player) event.getWhoClicked(),
-                            event.getCursor(),
-                            command
-                    );
-                    handler.onUseEvent(ue);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
-                            ((Player) event.getWhoClicked()).closeInventory();
-                        }
-                    }, 1);
-                    if (ue.willDestroy()) {
-                        destroy();
-                    }
-                }
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+            ItemStack handItem = event.getItem();
+            if (handItem.isSimilar(item)) {
+                UseEvent ue = new UseEvent(
+                        event.getPlayer(),
+                        event.getItem(),
+                        command
+                );
+                handler.onUseEvent(ue);
+                if (ue.willDestroy()) destroy();
+                event.setCancelled(true);
             }
         }
     }
