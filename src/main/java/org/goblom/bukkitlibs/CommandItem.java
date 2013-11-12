@@ -52,6 +52,15 @@ public class CommandItem implements Listener {
     private UseEventHandler handler;
     private UseTypeEvents useType;
 
+    /**
+     * Create Command Item
+     * 
+     * @param item ItemStack that the Command Item is attached to
+     * @param command Command that is attached to the ItemStack
+     * @param handler Handler to get data from the CommandItem
+     * @param useType How the command is triggered
+     * @param plugin Your plugin
+     */
     public CommandItem(ItemStack item, String command, UseEventHandler handler, UseTypeEvents useType, Plugin plugin) {
         this.item = item;
         this.command = command;
@@ -63,32 +72,61 @@ public class CommandItem implements Listener {
         new TypeEvents(this.useType);
     }
 
+    /**
+     * Set the command for the command item
+     * @param command command to set
+     * @return Command Item
+     */
     public CommandItem setCommand(String command) {
         this.command = command;
         return this;
     }
 
+    /**
+     * Sets the ItemStack for the command item.
+     * @param item itemstack to set
+     * @return this
+     */
     public CommandItem setItem(ItemStack item) {
         this.item = item;
         return this;
     }
 
+    /**
+     * gets the registered command
+     * @return command
+     */
     public String getCommand() {
         return command;
     }
 
+    /**
+     * gets the item stack
+     * @return item
+     */
     public ItemStack getItem() {
         return item;
     }
 
+    /**
+     * Perform the command for the given Command Item
+     * @param player Player to perform the command
+     */
     public void use(Player player) {
         player.performCommand(command);
     }
 
+    /**
+     * Give command item to a player.
+     * @param player Player to give the command item to.
+     */
     public void giveItem(Player player) {
         player.getInventory().addItem(item);
     }
 
+    /**
+     * Destroy the Command Item (Mostly)
+     */
     public void destroy() {
         HandlerList.unregisterAll(this);
         this.command = null;
@@ -111,6 +149,11 @@ public class CommandItem implements Listener {
 
         private boolean destroy;
 
+        /**
+         * @param player Player involved with this event
+         * @param item Itemstack involved with this event
+         * @param command Command from CommandItem
+         */
         public UseEvent(Player player, ItemStack item, String command) {
             this.player = player;
             this.name = name;
