@@ -50,7 +50,7 @@ public class CommandItem implements Listener {
 
     private Plugin plugin;
     private UseEventHandler handler;
-    private UseTypeEvents useType;
+    private UseType useType;
 
     /**
      * Create Command Item
@@ -61,7 +61,7 @@ public class CommandItem implements Listener {
      * @param useType How the command is triggered
      * @param plugin Your plugin
      */
-    public CommandItem(ItemStack item, String command, UseEventHandler handler, UseTypeEvents useType, Plugin plugin) {
+    public CommandItem(ItemStack item, String command, UseEventHandler handler, UseType useType, Plugin plugin) {
         this.item = item;
         this.command = command;
 
@@ -186,7 +186,7 @@ public class CommandItem implements Listener {
         }
     }
 
-    public enum UseTypeEvents {
+    public enum UseType {
 
         InventoryClickEvent,
         PlayerInteractEvent,
@@ -205,14 +205,14 @@ public class CommandItem implements Listener {
 
     class TypeEvents {
 
-        public TypeEvents(UseTypeEvents type) {
-            if (type.equals(UseTypeEvents.PlayerInteractEvent)) {
+        public TypeEvents(UseType type) {
+            if (type.equals(UseType.PlayerInteractEvent)) {
                 new PlayerInteract(plugin);
             }
-            if (type.equals(UseTypeEvents.InventoryClickEvent)) {
+            if (type.equals(UseType.InventoryClickEvent)) {
                 new InventoryClick(plugin);
             }
-            if (type.equals(UseTypeEvents.ALL)) {
+            if (type.equals(UseType.ALL)) {
                 new PlayerInteract(plugin);
                 new InventoryClick(plugin);
             }
