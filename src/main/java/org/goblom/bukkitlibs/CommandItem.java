@@ -24,13 +24,6 @@
 
 package org.goblom.bukkitlibs;
 
-/**
- * Command Items. Creates any item with the ability to run a command from anywhere in a world.
- * This is a class file for my upcoming plugin CommandItems.
- * 
- * @warning This class is experimental and still in its planning stages. Please refrain from using it until further notice.
- * @author Goblom
- */
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +36,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 /**
- *
+ * Command Items. Creates any item with the ability to run a command from anywhere in a world.
+ * This is a class file for my upcoming plugin CommandItems.
+ * 
+ * @warning This class is experimental and still in its planning stages. Please refrain from using it until further notice.
  * @author Goblom
  */
 public class CommandItem implements Listener {
