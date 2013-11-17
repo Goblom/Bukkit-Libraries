@@ -31,6 +31,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -88,13 +89,11 @@ public abstract class AbstractCommand implements CommandExecutor {
         if (this.alias != null) plgCMD.setAliases(this.alias);
     }
     
-    private boolean isPlayer(CommandSender sender) {
-        return (sender instanceof Player);
-    }
-    
-    private boolean isAuthorized(CommandSender sender, String permission) {
-        return sender.hasPermission(permission);
-    }
+    private boolean isPlayer(CommandSender sender) { return (sender instanceof Player); }
+    private boolean isAuthorized(CommandSender sender, String permission) { return sender.hasPermission(permission); }
+    private boolean isAuthorized(Player player, String permission) { return player.hasPermission(permission); }
+    private boolean isAuthorized(CommandSender sender, Permission perm) { return sender.hasPermission(perm); }
+    private boolean isAuthorized(Player player, Permission perm) { return player.hasPermission(perm); }
     
     public abstract boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
 }
