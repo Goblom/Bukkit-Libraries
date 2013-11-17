@@ -39,13 +39,13 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class AbstractCommand implements CommandExecutor {
     
-    protected Plugin plugin;
+    protected final Plugin plugin;
     
-    protected String command;
-    protected String description;
-    protected List<String> alias;
-    protected String usage;
-    protected String permMessage;
+    protected final String command;
+    protected final String description;
+    protected final List<String> alias;
+    protected final String usage;
+    protected final String permMessage;
     
     protected PluginCommand plgCMD;
     
@@ -81,7 +81,7 @@ public abstract class AbstractCommand implements CommandExecutor {
     }
     
     final void init() {
-        plgCMD = Bukkit.getServer().getPluginCommand(command);
+        plgCMD = Bukkit.getServer().getPluginCommand(this.command);
         if (this.usage != null) plgCMD.setUsage(this.usage);
         if (this.description != null) plgCMD.setDescription(this.description);
         if (this.permMessage != null) plgCMD.setPermissionMessage(this.permMessage);
