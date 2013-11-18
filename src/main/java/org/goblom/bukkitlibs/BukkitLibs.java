@@ -29,4 +29,14 @@ package org.goblom.bukkitlibs;
  * 
  * @author Goblom
  */
-public class BukkitLibs { }
+public class BukkitLibs { 
+    public DatabaseManager.MongoDB mongoDB;
+    
+    public void onEnable() {
+        mongoDB = new DatabaseManager.MongoDB("localhost", "minecraft");
+    }
+    
+    public void MongoDBTest() {
+        
+    }
+}
