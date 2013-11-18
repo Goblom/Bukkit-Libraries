@@ -228,7 +228,7 @@ public class DatabaseManager {
             }
         }
 
-        public String queryString(String connName, String sql, String column) {
+        public static String queryString(String connName, String sql, String column) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -248,7 +248,7 @@ public class DatabaseManager {
             }
         }
 
-        public int queryInt(String connName, String sql) {
+        public static int queryInt(String connName, String sql) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -268,7 +268,7 @@ public class DatabaseManager {
             }
         }
 
-        public int queryInt(String connName, String sql, String column) {
+        public static int queryInt(String connName, String sql, String column) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -288,7 +288,7 @@ public class DatabaseManager {
             }
         }
 
-        public long queryLong(String connName, String sql) {
+        public static long queryLong(String connName, String sql) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -308,7 +308,7 @@ public class DatabaseManager {
             }
         }
 
-        public long queryLong(String connName, String sql, String column) {
+        public static long queryLong(String connName, String sql, String column) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -328,7 +328,7 @@ public class DatabaseManager {
             }
         }
 
-        public float queryFloat(String connName, String sql) {
+        public static float queryFloat(String connName, String sql) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -348,7 +348,7 @@ public class DatabaseManager {
             }
         }
 
-        public float queryFloat(String connName, String sql, String column) {
+        public static float queryFloat(String connName, String sql, String column) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -368,7 +368,7 @@ public class DatabaseManager {
             }
         }
 
-        public boolean queryBoolean(String connName, String sql) {
+        public static boolean queryBoolean(String connName, String sql) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -388,7 +388,7 @@ public class DatabaseManager {
             }
         }
 
-        public boolean queryBoolean(String connName, String sql, String column) {
+        public static boolean queryBoolean(String connName, String sql, String column) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = dbStatement.get(connName).executeQuery(sql);;
@@ -408,7 +408,7 @@ public class DatabaseManager {
             }
         }
 
-        public int update(String connName, String sql) {
+        public static int update(String connName, String sql) {
             DatabaseManager.reconnect(connName);
             try {
                 return dbStatement.get(connName).executeUpdate(sql);
@@ -418,7 +418,7 @@ public class DatabaseManager {
             }
         }
 
-        public boolean tableContains(String connName, String table, String column, String value) {
+        public static boolean tableContains(String connName, String table, String column, String value) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = query(connName, "SELECT COUNT(" + column + ") AS " + column + "Count FROM " + table + " WHERE " + column + "='" + value + "'");
@@ -442,7 +442,7 @@ public class DatabaseManager {
             }
         }
 
-        public boolean tableContains(String connName, String table, String column1, String value1, String column2, String value2) {
+        public static boolean tableContains(String connName, String table, String column1, String value1, String column2, String value2) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = query(connName, "SELECT COUNT(" + column1 + ") AS " + column1 + "Count FROM " + table + " WHERE " + column1 + "='" + value1 + "' AND " + column2 + "='" + value2 + "'");
@@ -466,7 +466,7 @@ public class DatabaseManager {
             }
         }
 
-        public boolean tableContains(String connName, String table, String column1, String value1, String column2, String value2, String column3, String value3) {
+        public static boolean tableContains(String connName, String table, String column1, String value1, String column2, String value2, String column3, String value3) {
             DatabaseManager.reconnect(connName);
             try {
                 ResultSet rs = query(connName, "SELECT COUNT(" + column1 + ") AS " + column1 + "Count FROM " + table + " WHERE " + column1 + "='" + value1 + "' AND " + column2 + "='" + value2 + "' AND " + column3 + "='" + value3 + "'");
