@@ -131,7 +131,7 @@ public class DatabaseManager {
         protected abstract Connection connect() throws ClassNotFoundException, SQLException;
     }
 
-    public class MySQL extends Connector {
+    public static class MySQL extends Connector {
 
         public MySQL(String host, int port, String dbName, String[] credentials) {
             super(host, port, dbName, credentials);
@@ -144,7 +144,7 @@ public class DatabaseManager {
         }
     }
 
-    public class SQLite extends Connector {
+    public static class SQLite extends Connector {
 
         public SQLite(Plugin plugin, String dbFile) {
             super(plugin, dbFile);
