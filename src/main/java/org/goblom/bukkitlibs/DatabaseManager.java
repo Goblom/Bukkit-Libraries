@@ -80,6 +80,7 @@ public class DatabaseManager {
     }
 
     public static void reconnect(String connName) {
+        shutdown(connName);
         try {
             if (dbConnection.get(connName) == null || dbConnection.get(connName).isClosed()) {
                 dbConnection.remove(connName);
