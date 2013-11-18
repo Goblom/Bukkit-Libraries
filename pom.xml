@@ -25,5 +25,15 @@
       <artifactId>bukkit</artifactId>
       <version>1.6.2-R1.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>craftbukkit</artifactId>
+      <version>1.6.2-R1.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>2.11.1</version>
+    </dependency>
   </dependencies>
 </project>
