@@ -48,7 +48,7 @@ import org.bukkit.plugin.Plugin;
  * The easiest way in my opinion to manage multiple database (yes is said
  * multiple). This can allow for Fallback/Main databases, Synced local to off
  * site databases. Currently support MySQL, SQLite & MongoDB (supported but not
- * tested) coming in the future.
+ * tested).
  *
  * @author Goblom
  * @version 2.0
