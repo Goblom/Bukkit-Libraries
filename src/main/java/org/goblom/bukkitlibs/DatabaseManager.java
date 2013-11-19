@@ -56,7 +56,8 @@ import org.bukkit.plugin.Plugin;
 public class DatabaseManager {
 
     protected static final String MongoDBDriver = "http://central.maven.org/maven2/org/mongodb/mongo-java-driver/2.11.1/mongo-java-driver-2.11.1.jar";
-
+    protected static final String PostgreSQLDriver = "http://jdbc.postgresql.org/download/postgresql-9.2-1003.jdbc4.jar";
+    
     protected static Map<String, Connector> dbConnector = new HashMap();
     protected static Map<String, Connection> dbConnection = new HashMap();
     protected static Map<String, Statement> dbStatement = new HashMap();
@@ -183,6 +184,11 @@ public class DatabaseManager {
 
         @Override
         protected Connection connect() throws ClassNotFoundException, SQLException {
+            try { 
+                JarUtil.downloadJar(PostgreSQLDriver, "postgresql-9.2-1003.jdbc4.jar"); 
+                JarUtil.addClassPath(JarUtil.getJarUrl(new File("lib/", "postgresql-9.2-1003.jdbc4.jar")));
+            } catch (IOException e) { e.printStackTrace(); }
+            
             Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + dbName, credentials[0], credentials[1]);
         }
