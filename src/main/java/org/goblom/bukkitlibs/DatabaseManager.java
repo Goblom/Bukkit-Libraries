@@ -47,7 +47,7 @@ import org.bukkit.plugin.Plugin;
  *
  * The easiest way in my opinion to manage multiple database (yes is said
  * multiple). This can allow for Fallback/Main databases, Synced local to off
- * site databases. Currently support MySQL, SQLite & MongoDB (supported but not
+ * site databases. Currently support MySQL, SQLite , PostgreSQL & MongoDB (supported but not
  * tested).
  *
  * @author Goblom
@@ -110,7 +110,7 @@ public class DatabaseManager {
         }
     }
 
-    public static abstract class Connector extends DatabaseManager {
+    public static abstract class Connector {
 
         protected final Plugin plugin;
         protected final File dbFile;
@@ -175,7 +175,19 @@ public class DatabaseManager {
             return DriverManager.getConnection("jdbc:sqlite:" + dbFile);
         }
     }
+    public static class PostgreSQL extends Connector {
 
+        public PostgreSQL(String host, int port, String dbName, String[] credentials) {
+            super(host, port, dbName, credentials);
+        }
+
+        @Override
+        protected Connection connect() throws ClassNotFoundException, SQLException {
+            Class.forName("org.postgresql.Driver");
+            return DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + dbName, credentials[0], credentials[1]);
+        }
+    }
+    
     public static class MongoDB {
 
         private String host;
