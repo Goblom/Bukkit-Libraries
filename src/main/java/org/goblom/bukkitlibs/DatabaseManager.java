@@ -697,5 +697,21 @@ public class DatabaseManager {
                 return null;
             }
         }
+
+        public int getRowsInTable(String connName, String table) {
+            DatabaseManager.reconnect(connName);
+            try {
+                ResultSet rs = query(connName, "SELECT COUNT(*) FROM '" + table + "';");
+
+                while (rs.next()) {
+                    String id = rs.getString(1);
+                }
+                rs.last();
+                return rs.getRow();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
     }
 }
