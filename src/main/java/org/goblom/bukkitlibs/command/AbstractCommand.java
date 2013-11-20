@@ -51,7 +51,7 @@ public abstract class AbstractCommand implements CommandExecutor {
     protected final String permMessage;
 
     protected static CommandMap cmap;
-    protected PluginCommand plgCMD;
+//    protected PluginCommand plgCMD;
     
     public AbstractCommand(String command) {
         this(command, null, null, null, null);
@@ -92,12 +92,12 @@ public abstract class AbstractCommand implements CommandExecutor {
         if (this.permMessage != null) cmd.setPermissionMessage(this.permMessage);
         cmd.setExecutor(this);
         
-        plgCMD = Bukkit.getServer().getPluginCommand(this.command);
-        plgCMD.setExecutor(this);
-        if (this.usage != null) plgCMD.setUsage(this.usage);
-        if (this.description != null) plgCMD.setDescription(this.description);
-        if (this.permMessage != null) plgCMD.setPermissionMessage(this.permMessage);
-        if (this.alias != null) plgCMD.setAliases(this.alias);
+//        plgCMD = Bukkit.getServer().getPluginCommand(this.command);
+//        plgCMD.setExecutor(this);
+//        if (this.usage != null) plgCMD.setUsage(this.usage);
+//        if (this.description != null) plgCMD.setDescription(this.description);
+//        if (this.permMessage != null) plgCMD.setPermissionMessage(this.permMessage);
+//        if (this.alias != null) plgCMD.setAliases(this.alias);
     }
     
     final CommandMap getCommandMap() {
