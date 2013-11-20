@@ -130,4 +130,5 @@ public abstract class AbstractCommand implements CommandExecutor {
     private boolean isAuthorized(Player player, Permission perm) { return player.hasPermission(perm); }
     
     public abstract boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
+    public abstract List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args);
 }
