@@ -36,6 +36,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,8 @@ import org.bukkit.plugin.Plugin;
  *
  * The easiest way in my opinion to manage multiple database (yes is said
  * multiple). This can allow for Fallback/Main databases, Synced local to off
- * site databases. Currently support MySQL, SQLite , PostgreSQL & MongoDB (supported but not
- * tested).
+ * site databases. Currently support MySQL, SQLite , PostgreSQL & MongoDB
+ * (supported but not tested).
  *
  * @author Goblom
  * @version 2.0
@@ -57,7 +58,7 @@ public class DatabaseManager {
 
     protected static final String MongoDBDriver = "http://central.maven.org/maven2/org/mongodb/mongo-java-driver/2.11.1/mongo-java-driver-2.11.1.jar";
     protected static final String PostgreSQLDriver = "http://jdbc.postgresql.org/download/postgresql-9.2-1003.jdbc4.jar";
-    
+
     protected static Map<String, Connector> dbConnector = new HashMap();
     protected static Map<String, Connection> dbConnection = new HashMap();
     protected static Map<String, Statement> dbStatement = new HashMap();
@@ -176,6 +177,7 @@ public class DatabaseManager {
             return DriverManager.getConnection("jdbc:sqlite:" + dbFile);
         }
     }
+
     public static class PostgreSQL extends Connector {
 
         public PostgreSQL(String host, int port, String dbName, String[] credentials) {
@@ -184,16 +186,18 @@ public class DatabaseManager {
 
         @Override
         protected Connection connect() throws ClassNotFoundException, SQLException {
-            try { 
-                JarUtil.downloadJar(PostgreSQLDriver, "postgresql-9.2-1003.jdbc4.jar"); 
+            try {
+                JarUtil.downloadJar(PostgreSQLDriver, "postgresql-9.2-1003.jdbc4.jar");
                 JarUtil.addClassPath(JarUtil.getJarUrl(new File("lib/", "postgresql-9.2-1003.jdbc4.jar")));
-            } catch (IOException e) { e.printStackTrace(); }
-            
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + dbName, credentials[0], credentials[1]);
         }
     }
-    
+
     public static class MongoDB {
 
         private String host;
@@ -215,12 +219,14 @@ public class DatabaseManager {
             this.host = host;
             this.port = port;
             this.dbName = dbName;
-            
-            try { 
-                JarUtil.downloadJar(MongoDBDriver, "mongo-java-driver-2.11.1.jar"); 
+
+            try {
+                JarUtil.downloadJar(MongoDBDriver, "mongo-java-driver-2.11.1.jar");
                 JarUtil.addClassPath(JarUtil.getJarUrl(new File("lib/", "mongo-java-driver-2.11.1.jar")));
-            } catch (IOException e) { e.printStackTrace(); }
-            
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             connect();
         }
 
@@ -263,11 +269,11 @@ public class DatabaseManager {
         public MongoClient getMongoClient() {
             return mongo;
         }
-        
+
         public DB getDatabase() {
             return database;
         }
-        
+
         public DB getDatabase(String database) {
             return mongo.getDB(dbName);
         }
@@ -671,6 +677,24 @@ public class DatabaseManager {
             } catch (SQLException e) {
                 e.printStackTrace();
                 return false;
+            }
+        }
+
+        public List<String> queryStringList(String connName, String sql, String column) {
+            DatabaseManager.reconnect(connName);
+            List<String> list = new ArrayList<String>();
+            try {
+                ResultSet rs = dbStatement.get(connName).executeQuery(sql);
+                if (rs == null) {
+                    return null;
+                }
+                do {
+                    list.add(rs.getString(column));
+                } while (rs.next());
+                return list;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
             }
         }
     }
