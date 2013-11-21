@@ -84,11 +84,11 @@ public abstract class AbstractCommand implements CommandExecutor {
     
     final void init() {
         ReflectCommand cmd = new ReflectCommand(this.command);
-        getCommandMap().register("", cmd);
         if (this.alias != null) cmd.setAliases(this.alias);
         if (this.description != null) cmd.setDescription(this.description);
         if (this.usage != null) cmd.setUsage(this.usage);
         if (this.permMessage != null) cmd.setPermissionMessage(this.permMessage);
+        getCommandMap().register("", cmd);
         cmd.setExecutor(this);
         
 //        plgCMD = Bukkit.getServer().getPluginCommand(this.command);
