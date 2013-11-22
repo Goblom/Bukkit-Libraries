@@ -216,6 +216,17 @@ public class BoardManager {
     }
     
     /**
+     * Sets the scoreboard of a player to a scoreboard other then this one
+     * 
+     * @param player Player to set the otherScoreboard
+     * @param otherScoreboard Other Scoreboard to set
+     */
+    public void setScoreboard(Player player, Scoreboard otherScoreboard) {
+        player.setScoreboard(otherScoreboard);
+        players.remove(player.getName());
+    }
+    
+    /**
      * Remove the scoreboard of a player
      * 
      * @param player Player to remove the scoreboard
