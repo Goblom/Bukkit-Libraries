@@ -47,6 +47,8 @@ import org.bukkit.scoreboard.Team;
 public class BoardManager {
     
     private final String boardName;
+    private final String mainObjectiveName;
+    
     private final Scoreboard scoreBoard;
     private final Objective mainObjective;
     
@@ -57,26 +59,29 @@ public class BoardManager {
      * Create a Scoreboard with the given name in the desired slot and its blank by default
      * 
      * @param scoreBoardName Name of the scoreboard
+     * @param mainObjectiveName Name of the main Objective
      * @param slot Slot where scoreboard should be displayed.... SIDEBAR, BELOW_NAME, PLAYER_LIST
      */
-    public BoardManager(String scoreBoardName, DisplaySlot slot) {
-        this(scoreBoardName, slot, null);
+    public BoardManager(String scoreBoardName, String mainObjectiveName, DisplaySlot slot) {
+        this(scoreBoardName, mainObjectiveName, slot, null);
     }
     
     /**
      * Create a scoreboard with the given name, in the desired slot and not have it be blank by default
      * 
      * @param scoreBoardName Name of the scoreboard
+     * @param mainObjectiveName Name of the main objective
      * @param slot Slot where the scoreboard should be displayed.... SIDEBAR, BELOW_NAME, PLAYER_LIST
      * @param lines The data to be shown on the scoreboard. 
      */
-    public BoardManager(String scoreBoardName, DisplaySlot slot, String[] lines) { //I like use String[]. If you do not replace the [] with ...
+    public BoardManager(String scoreBoardName, String mainObjectiveName, DisplaySlot slot, String[] lines) { //I like use String[]. If you do not replace the [] with ...
         this.boardName = scoreBoardName;
+        this.mainObjectiveName = mainObjectiveName;
         this.slot = slot;
         this.scoreBoard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.mainObjective = scoreBoard.registerNewObjective("main", ObjectiveCriteria.DUMMY.getName());
         
-        mainObjective.setDisplayName(scoreBoardName);
+        mainObjective.setDisplayName(mainObjectiveName);
         mainObjective.setDisplaySlot(slot);
         
         if (lines != null) {
@@ -93,6 +98,14 @@ public class BoardManager {
      */
     public String getBoardName() {
         return boardName;
+    }
+    
+    /**
+     * Main objective name
+     * @return main objective name
+     */
+    public String getMainObjectiveName() {
+        return mainObjectiveName;
     }
     
     /**
