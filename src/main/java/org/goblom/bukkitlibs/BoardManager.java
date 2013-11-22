@@ -50,7 +50,7 @@ public class BoardManager {
     private final String mainObjectiveName;
     
     private final Scoreboard scoreBoard;
-    private final Objective mainObjective;
+    private Objective mainObjective;
     
     private final List<String> players = new ArrayList<String>();
     private DisplaySlot slot;
@@ -106,6 +106,19 @@ public class BoardManager {
      */
     public String getMainObjectiveName() {
         return mainObjectiveName;
+    }
+    
+    /**
+     * Change the Criteria of the main Objective. WARNING will reset all data in Main Objective
+     * 
+     * @param criteria Criteria to change to
+     */
+    public void changeCriteria(ObjectiveCriteria criteria) {
+        this.mainObjective.unregister();
+        this.mainObjective = null;
+        this.mainObjective = scoreBoard.registerNewObjective("main", criteria.getName());
+        mainObjective.setDisplayName(mainObjectiveName);
+        mainObjective.setDisplaySlot(slot);
     }
     
     /**
