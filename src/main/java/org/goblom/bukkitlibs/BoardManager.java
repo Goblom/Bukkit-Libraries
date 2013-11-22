@@ -44,9 +44,6 @@ import org.bukkit.scoreboard.Team;
  */
 public class BoardManager {
     
-    private final Plugin plugin;
-    private BukkitTask task;
-    
     private final String boardName;
     private final Scoreboard scoreBoard;
     private final Objective mainObjective;
@@ -54,8 +51,7 @@ public class BoardManager {
     private final List<String> players = new ArrayList<String>();
     private DisplaySlot slot;
     
-    public BoardManager(Plugin plugin, String scoreBoardName, DisplaySlot slot) {
-        this.plugin = plugin;
+    public BoardManager(String scoreBoardName, DisplaySlot slot) {
         this.boardName = scoreBoardName;
         this.slot = slot;
         this.scoreBoard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -63,8 +59,6 @@ public class BoardManager {
         
         mainObjective.setDisplayName(scoreBoardName);
         mainObjective.setDisplaySlot(slot);
-        
-        startChecking();
     }
     
     public String getBoardName() {
@@ -79,17 +73,20 @@ public class BoardManager {
         this.slot = slot;
     }
     
+    public void checkPlayers() {
+        for (String playerName : players) {
+            Player player = Bukkit.getPlayer(playerName);
+            if (player != null) {
+                if (!player.getScoreboard().equals(scoreBoard)) { // if (player.getScoreboard() != scoreBoard) {
+                    players.remove(playerName);
+                }
+            } else players.remove(playerName);
+        }
+    }
+    
     public List<String> getPlayers() {
+        checkPlayers();
         return players;
-    }
-    
-    public final void startChecking() {
-        this.task = Bukkit.getScheduler().runTaskTimer(plugin, new BoardChecker(), 0, 20); //Check every second
-    }
-    
-    public void stopChecking() {
-        task.cancel();
-        this.task = null;
     }
     
     public Set<Team> getTeams() {
@@ -221,18 +218,5 @@ public class BoardManager {
         public String getStatWithID(int id) { return name + "." + id; }
         public String getStatWithID(String stat, int id) { return "stat." + stat + "." + id; }
         
-    }
-    
-    private final class BoardChecker implements Runnable {
-        public void run() {
-            for (String playerName : players) {
-                Player player = Bukkit.getPlayer(playerName);
-                if (player != null) {
-                    if (!player.getScoreboard().equals(scoreBoard)) { // if (player.getScoreboard() != scoreBoard) {
-                        players.remove(playerName);
-                    }
-                } else players.remove(playerName);
-            }
-        }
     }
 }
