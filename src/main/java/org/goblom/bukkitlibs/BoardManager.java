@@ -37,7 +37,11 @@ import org.bukkit.scoreboard.Team;
 
 
 /**
- *
+ * ScoreBoard Manager v1
+ * Easily create and manage scoreboards in your plugin.
+ * 
+ * 
+ * @version 1
  * @author Goblom
  */
 public class BoardManager {
@@ -49,10 +53,23 @@ public class BoardManager {
     private final List<String> players = new ArrayList<String>();
     private DisplaySlot slot;
     
+    /**
+     * Create a Scoreboard with the given name in the desired slot and its blank by default
+     * 
+     * @param scoreBoardName Name of the scoreboard
+     * @param slot Slot where scoreboard should be displayed.... SIDEBAR, BELOW_NAME, PLAYER_LIST
+     */
     public BoardManager(String scoreBoardName, DisplaySlot slot) {
         this(scoreBoardName, slot, null);
     }
     
+    /**
+     * Create a scoreboard with the given name, in the desired slot and not have it be blank by default
+     * 
+     * @param scoreBoardName Name of the scoreboard
+     * @param slot Slot where the scoreboard should be displayed.... SIDEBAR, BELOW_NAME, PLAYER_LIST
+     * @param lines The data to be shown on the scoreboard. 
+     */
     public BoardManager(String scoreBoardName, DisplaySlot slot, String[] lines) { //I like use String[]. If you do not replace the [] with ...
         this.boardName = scoreBoardName;
         this.slot = slot;
@@ -69,18 +86,37 @@ public class BoardManager {
         }
     }
     
+    /**
+     * ScoreBoard name
+     * 
+     * @return scoreBoard name
+     */
     public String getBoardName() {
         return boardName;
     }
     
+    /**
+     * Slot that the scoreboard is displayed
+     * 
+     * @return DisplaySlot
+     */
     public DisplaySlot getDisplaySlot() {
         return slot;
     }
     
+    /**
+     * Change where the scoreboard is displayed
+     * 
+     * @param slot DisplaySlot to change to
+     */
     public void setDisplaySlot(DisplaySlot slot) {
         this.slot = slot;
     }
     
+    /**
+     * Simple method to check all players in the list to make sure they still
+     * have this scoreboard. If they do not then remove them from the list
+     */
     public void checkPlayers() {
         for (String playerName : players) {
             Player player = Bukkit.getPlayer(playerName);
@@ -92,77 +128,183 @@ public class BoardManager {
         }
     }
     
+    /**
+     * Get all players that have this scoreboard
+     * @return a list of player names
+     */
     public List<String> getPlayers() {
         checkPlayers();
         return players;
     }
     
+    /**
+     * Gets all teams associated with this scoreboard
+     * 
+     * @return A team list
+     */
     public Set<Team> getTeams() {
         return scoreBoard.getTeams();
     }
     
+    /**
+     * Gets a team associated with this scoreboard. Used to add players to a
+     * team, etc.
+     *
+     * @param teamName Team to get
+     * @return Team from scoreboard
+     */
     public Team getTeam(String teamName) {
         return scoreBoard.getTeam(teamName);
     }
     
+    /**
+     * Register a new team with the scoreboard
+     * 
+     * @param teamName Team to register
+     */
     public void registerTeam(String teamName) {
         scoreBoard.registerNewTeam(teamName);
     }
     
+    /**
+     * Get all objectivers registered on this scoreboard
+     * 
+     * @return A list of objectives
+     */
     public Set<Objective> getObjectives() {
         return scoreBoard.getObjectives();
     }
     
+    /**
+     * Gets an objective from this scoreboard
+     * 
+     * @param objectiveName Objective to get
+     * @return Objective found
+     */
     public Objective getObjective(String objectiveName) {
         return scoreBoard.getObjective(objectiveName);
     }
     
+    /**
+     * Register a new objective with this scoreboard
+     * 
+     * @param objective Objective Name
+     * @param criteria Criteria that the objective listens to
+     */
     public void registerObjective(String objective, ObjectiveCriteria criteria) {
         scoreBoard.registerNewObjective(objective, criteria.getName());
     }
     
+    /**
+     * Gets the Objective in a slot
+     * 
+     * @param slot DisplaySlot to check
+     * @return Objective in slot
+     */
     public Objective getObjectiveInSlot(DisplaySlot slot) {
         return scoreBoard.getObjective(slot);
     }
     
+    /**
+     * Set the scoreboard of a player to this
+     * 
+     * @param player Player to set the scoreboard
+     */
     public void setScoreboard(Player player) {
         player.setScoreboard(scoreBoard);
         players.add(player.getName());
     }
     
+    /**
+     * Remove the scoreboard of a player
+     * 
+     * @param player Player to remove the scoreboard
+     * @param blank Should it be a blank scoreboard or the main servers scoreboard
+     */
     public void removeScoreboard(Player player, boolean blank) {
         if (blank) player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         else player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
     
+    /**
+     * Add a score to the Main Objective. Main objective is first created when board is created.
+     * 
+     * @param scoreName Name of Score to add
+     * @param score What should the amount displayed be
+     */
     public void addObjectiveScore(String scoreName, int score) {
         mainObjective.getScore(Bukkit.getOfflinePlayer(scoreName)).setScore(score);
     }
     
+    /**
+     * Add a score an objective other then the Main objective.
+     * 
+     * @param objective Objective to add the score to
+     * @param scoreName Name of the Score to add
+     * @param score What should the amount displayed be
+     */
     public void addObjectiveScore(Objective objective, String scoreName, int score) {
         objective.getScore(Bukkit.getOfflinePlayer(scoreName)).setScore(score);
     }
     
+    /**
+     * Get a Score from the Main Objective
+     * 
+     * @param score Score to get
+     * @return Score gotten
+     */
     public Score getObjectiveScore(String score) {
         return mainObjective.getScore(Bukkit.getOfflinePlayer(score));
     }
     
+    /**
+     * Get a score from an objective other then the Main Objective
+     * 
+     * @param objective Objective to get the score from
+     * @param score Score to get
+     * @return Score gotten
+     */
     public Score getObjectiveScore(Objective objective, String score) {
         return objective.getScore(Bukkit.getOfflinePlayer(score));
     }
     
+    /**
+     * Sets the score of a score on the Main objective
+     * 
+     * @param scoreName Name of score to set
+     * @param setScore Amount to display
+     */
     public void setObjectiveScore(String scoreName, int setScore) {
         getObjectiveScore(scoreName).setScore(setScore);
     }
     
+    /**
+     * Sets the score of a score on an objective other then the Main Objective
+     * 
+     * @param objective Objective to set the score on
+     * @param scoreName Name of score to set
+     * @param setScore Amount to display
+     */
     public void setObjectiveScore(Objective objective, String scoreName, int setScore) {
         getObjectiveScore(objective, scoreName).setScore(setScore);
     }
     
+    /**
+     * Get all scores on this scoreboard with the given name
+     * 
+     * @param score Scores to search for
+     * @return A list of all the scores found
+     */
     public Set<Score> getScores(String score) {
         return scoreBoard.getScores(Bukkit.getOfflinePlayer(score));
     }
     
+    /**
+     * What should the Objective listen to.
+     * 
+     * Bukkit ONLY supports: DUMMY, DEATH_COUND, HEALTH, PLAYER_KILL_COUNT, TOTAL_KILL_COUNT.
+     * Everything else requires a 1.7 Bukkit Server with 1.7 features
+     */
     public static enum ObjectiveCriteria {
         //pre 1.7
         DUMMY("dummy"), DEATH_COUNT("deathCount"), HEALTH("health"),
