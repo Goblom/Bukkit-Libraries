@@ -36,10 +36,9 @@ import org.bukkit.inventory.ItemStack;
  * @author Goblom
  */
 public class AddGlow {
-    private final GlowEffect effect = new GlowEffect(100);
     
     public AddGlow(ItemStack item) {
-        item.addUnsafeEnchantment(effect, 1);
+        item.addUnsafeEnchantment(new GlowEffect(100), 1);
     }
     
     private final class GlowEffect extends CustomEnchantment {
