@@ -50,6 +50,10 @@ public class BoardManager {
     private DisplaySlot slot;
     
     public BoardManager(String scoreBoardName, DisplaySlot slot) {
+        this(scoreBoardName, slot, null);
+    }
+    
+    public BoardManager(String scoreBoardName, DisplaySlot slot, String[] lines) { //I like use String[]. If you do not replace the [] with ...
         this.boardName = scoreBoardName;
         this.slot = slot;
         this.scoreBoard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -57,6 +61,12 @@ public class BoardManager {
         
         mainObjective.setDisplayName(scoreBoardName);
         mainObjective.setDisplaySlot(slot);
+        
+        if (lines != null) {
+            for (int i = 0; i < lines.length; i++) {
+                addObjectiveScore(lines[i], i);
+            }
+        }
     }
     
     public String getBoardName() {
@@ -125,12 +135,12 @@ public class BoardManager {
         else player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
     
-    public void addObjectiveScore(String score) {
-        mainObjective.getScore(Bukkit.getOfflinePlayer(score));
+    public void addObjectiveScore(String scoreName, int score) {
+        mainObjective.getScore(Bukkit.getOfflinePlayer(scoreName)).setScore(score);
     }
     
-    public void addObjectiveScore(Objective objective, String score) {
-        objective.getScore(Bukkit.getOfflinePlayer(score));
+    public void addObjectiveScore(Objective objective, String scoreName, int score) {
+        objective.getScore(Bukkit.getOfflinePlayer(scoreName)).setScore(score);
     }
     
     public Score getObjectiveScore(String score) {
