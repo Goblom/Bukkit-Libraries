@@ -23,11 +23,6 @@
  */
 package org.goblom.bukkitlibs;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -56,7 +51,6 @@ import org.bukkit.plugin.Plugin;
  */
 public class DatabaseManager {
 
-    protected static final String MongoDBDriver = "http://central.maven.org/maven2/org/mongodb/mongo-java-driver/2.11.1/mongo-java-driver-2.11.1.jar";
     protected static final String PostgreSQLDriver = "http://jdbc.postgresql.org/download/postgresql-9.2-1003.jdbc4.jar";
 
     protected static Map<String, Connector> dbConnector = new HashMap();
@@ -195,163 +189,6 @@ public class DatabaseManager {
 
             Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + dbName, credentials[0], credentials[1]);
-        }
-    }
-
-    public static class MongoDB {
-
-        private String host;
-        private int port;
-        private String dbName;
-
-        private MongoClient mongo;
-        private DB database;
-
-        public MongoDB(String host) {
-            this(host, 0, null);
-        }
-
-        public MongoDB(String host, String dbName) {
-            this(host, 0, dbName);
-        }
-
-        public MongoDB(String host, int port, String dbName) {
-            this.host = host;
-            this.port = port;
-            this.dbName = dbName;
-
-            try {
-                JarUtil.downloadJar(MongoDBDriver, "mongo-java-driver-2.11.1.jar");
-                JarUtil.addClassPath(JarUtil.getJarUrl(new File("lib/", "mongo-java-driver-2.11.1.jar")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            connect();
-        }
-
-        public void connect() {
-            if (this.mongo != null) {
-                this.mongo.close();
-                this.mongo = null;
-            }
-
-            try {
-                if (port != 0) {
-                    this.mongo = new MongoClient(host, port);
-                } else {
-                    this.mongo = new MongoClient(host);
-                }
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-
-            if (dbName != null) {
-                this.database = mongo.getDB(dbName);
-            }
-        }
-
-        public void setDatabase(String dbName) {
-            this.dbName = dbName;
-            this.database = mongo.getDB(dbName);
-
-            connect();
-        }
-
-        public void setPort(int port) {
-            this.mongo.close();
-            this.mongo = null;
-            this.database = null;
-
-            connect();
-        }
-
-        public MongoClient getMongoClient() {
-            return mongo;
-        }
-
-        public DB getDatabase() {
-            return database;
-        }
-
-        public DB getDatabase(String database) {
-            return mongo.getDB(dbName);
-        }
-
-        public boolean authenticate(DB database, String username, char[] password) {
-            return database.authenticate(username, password);
-        }
-
-        public boolean authenticate(String username, char[] password) {
-            return database.authenticate(username, password);
-        }
-
-        public List<String> getDatabases() {
-            return mongo.getDatabaseNames();
-        }
-
-        public void dropDatabase(String dbName) {
-            mongo.dropDatabase(dbName);
-        }
-
-        public Set<String> getCollections() {
-            return database.getCollectionNames();
-        }
-
-        public Set<String> getCollections(DB database) {
-            return database.getCollectionNames();
-        }
-
-        public DBCollection getCollection(String collectionName) {
-            return database.getCollection(dbName);
-        }
-
-        public DBCollection getCollection(DB database, String collectionName) {
-            return database.getCollection(dbName);
-        }
-
-        public void insertDocument(DBCollection coll, BasicDBObject bdbo) {
-            coll.insert(bdbo);
-        }
-
-        public BasicDBObject createBasicDBObject(String key, Object value) {
-            return new BasicDBObject(key, value);
-        }
-
-        public BasicDBObject createBasicDBObject(String[] keys, Object[] keyValues) {
-            BasicDBObject doc = new BasicDBObject();
-            for (int i = 0; i < keys.length; i++) {
-                doc.append(keys[i], keyValues[i]);
-            }
-            return doc;
-        }
-
-        public BasicDBObject inserBasicObject(String key, Object[] values) {
-            return new BasicDBObject(key, values);
-        }
-
-        public Long count(String collectionName) {
-            return database.getCollection(collectionName).count();
-        }
-
-        public Long count(DB database, String collectionName) {
-            return database.getCollection(collectionName).count();
-        }
-
-        public DBCursor getDocuments(String collectionName) {
-            return database.getCollection(collectionName).find();
-        }
-
-        public DBCursor getDocuments(DB database, String collectionName) {
-            return database.getCollection(collectionName).find();
-        }
-
-        public DBCursor getDocument(String collectionName, BasicDBObject bdbo) {
-            return database.getCollection(collectionName).find(bdbo);
-        }
-
-        public DBCursor getDocument(DB database, String collectionName, BasicDBObject bdbo) {
-            return database.getCollection(collectionName).find(bdbo);
         }
     }
 
