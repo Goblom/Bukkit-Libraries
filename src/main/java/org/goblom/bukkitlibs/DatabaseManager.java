@@ -496,21 +496,18 @@ public class DatabaseManager {
         }
 
         public List<String> queryStringList(String connName, String sql, String column) {
-            DatabaseManager.reconnect(connName);
-            List<String> list = new ArrayList<String>();
-            try {
-                ResultSet rs = dbStatement.get(connName).executeQuery(sql);
-                if (rs == null) {
-                    return null;
+                List<String> list = new ArrayList<String>();
+                try {
+                        ResultSet rs = query(connName, sql);
+                        if (rs == null) return null;
+                        while (rs.next()) {
+                            list.add(rs.getString(column));
+                        }
+                        return list;
+                } catch (SQLException e) {
+                        e.printStackTrace();
+                        return null;
                 }
-                do {
-                    list.add(rs.getString(column));
-                } while (rs.next());
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
         }
 
         public int getRowsInTable(String connName, String table) {
@@ -518,11 +515,7 @@ public class DatabaseManager {
             try {
                 ResultSet rs = query(connName, "SELECT COUNT(*) FROM '" + table + "';");
 
-                while (rs.next()) {
-                    String id = rs.getString(1);
-                }
-                rs.last();
-                return rs.getRow();
+                return rs.getInt("Count(*)");
             } catch (SQLException e) {
                 e.printStackTrace();
                 return 0;
