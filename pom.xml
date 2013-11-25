@@ -30,10 +30,5 @@
       <artifactId>craftbukkit</artifactId>
       <version>1.6.2-R1.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.2-1003-jdbc4</version>
-    </dependency>
   </dependencies>
 </project>

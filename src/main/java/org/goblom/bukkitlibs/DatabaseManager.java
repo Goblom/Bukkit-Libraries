@@ -51,8 +51,6 @@ import org.bukkit.plugin.Plugin;
  */
 public class DatabaseManager {
 
-    protected static final String PostgreSQLDriver = "http://jdbc.postgresql.org/download/postgresql-9.2-1003.jdbc4.jar";
-
     protected static Map<String, Connector> dbConnector = new HashMap();
     protected static Map<String, Connection> dbConnection = new HashMap();
     protected static Map<String, Statement> dbStatement = new HashMap();
@@ -169,26 +167,6 @@ public class DatabaseManager {
                 }
             }
             return DriverManager.getConnection("jdbc:sqlite:" + dbFile);
-        }
-    }
-
-    public static class PostgreSQL extends Connector {
-
-        public PostgreSQL(String host, int port, String dbName, String[] credentials) {
-            super(host, port, dbName, credentials);
-        }
-
-        @Override
-        protected Connection connect() throws ClassNotFoundException, SQLException {
-            try {
-                JarUtil.downloadJar(PostgreSQLDriver, "postgresql-9.2-1003.jdbc4.jar");
-                JarUtil.addClassPath(JarUtil.getJarUrl(new File("lib/", "postgresql-9.2-1003.jdbc4.jar")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Class.forName("org.postgresql.Driver");
-            return DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + dbName, credentials[0], credentials[1]);
         }
     }
 
