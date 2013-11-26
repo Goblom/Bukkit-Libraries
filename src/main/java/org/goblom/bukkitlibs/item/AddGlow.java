@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.goblom.bukkitlibs;
+package org.goblom.bukkitlibs.item;
 
 import java.lang.reflect.Field;
 import org.bukkit.enchantments.Enchantment;
