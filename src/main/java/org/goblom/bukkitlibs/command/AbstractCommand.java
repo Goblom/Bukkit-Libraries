@@ -35,8 +35,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
-import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
-
 /**
  *
  * @author Goblom
@@ -102,12 +100,10 @@ public abstract class AbstractCommand implements CommandExecutor {
     final CommandMap getCommandMap() {
         if (cmap == null) {
             try {
-                if (Bukkit.getServer() instanceof CraftServer) {
-                    final Field f = CraftServer.class.getDeclaredField("commandMap");
-                    f.setAccessible(true);
-                    cmap = (CommandMap) f.get(Bukkit.getServer());
-                    return getCommandMap();
-                }
+                final Field f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+                f.setAccessible(true);
+                cmap = (CommandMap) f.get(Bukkit.getServer());
+                return getCommandMap();
             } catch (Exception e) { e.printStackTrace(); }
         } else if (cmap != null) { return cmap; }
         return getCommandMap();
