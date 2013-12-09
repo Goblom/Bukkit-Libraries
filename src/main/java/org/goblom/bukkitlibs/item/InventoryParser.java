@@ -63,6 +63,11 @@ public class InventoryParser {
         return YamlConfiguration.loadConfiguration(getFileForPlayer(player));
     }
     
+    public void saveInventory(Player player) {
+        ParseForPlayer pfp = new ParseForPlayer(player);
+        pfp.saveInventory(false);
+    }
+    
     public class ParseForPlayer {
         private final String playerName;
         private final File playerFile;
