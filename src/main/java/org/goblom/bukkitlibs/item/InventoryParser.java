@@ -130,8 +130,11 @@ public class InventoryParser {
                         if (meta.hasDisplayName()) playerConfig.set("Contents." + i + ".ItemMeta.Display-Name", meta.getDisplayName());
                         if (meta.hasLore()) playerConfig.set("Contents." + i + ".ItemMeta.Lore", meta.getLore());
                         if (meta.hasEnchants()) {
-                            for (Enchantment enchant : meta.getEnchants().keySet()) {
-                                playerConfig.set("Contents." + i + ".ItemMeta.Enchantment." + enchant.getName() + ".Level", meta.getEnchantLevel(enchant));
+//                            for (Enchantment enchant : meta.getEnchants().keySet()) {
+//                                playerConfig.set("Contents." + i + ".ItemMeta.Enchantment." + enchant.getName() + ".Level", meta.getEnchantLevel(enchant));
+//                            }
+                            for (Enchantment enchant : item.getEnchantments().keySet()) {
+                                playerConfig.set("Contents." + i + ".ItemMeta.Enchantment." + enchant.getName() + ".Level", item.getEnchantmentLevel(enchant));
                             }
                         }
                     }
@@ -172,8 +175,11 @@ public class InventoryParser {
                                         if (config.contains("Armor." + i + ".ItemMeta.Lore")) meta.setLore(config.getStringList("Armor." + i + ".ItemMeta.Lore"));
                                         if (config.contains("Armor." + i + ".ItemMeta.Display-Name")) meta.setDisplayName(config.getString("Armor." + i + ".ItemMeta.Display-Name"));
                                         if (config.contains("Armor." + i + ".ItemMeta.Enchantment")) {
-                                            for (String enchantName : config.getConfigurationSection("Armor." + i + ".ItemMeta.Enchantment").getKeys(false)) {
-                                                meta.addEnchant(Enchantment.getByName(enchantName), config.getInt("Armor." + i + ".ItemMeta.Enchantment." + enchantName + ".Level"), true);
+//                                            for (String enchantName : config.getConfigurationSection("Armor." + i + ".ItemMeta.Enchantment").getKeys(false)) {
+//                                                meta.addEnchant(Enchantment.getByName(enchantName), config.getInt("Armor." + i + ".ItemMeta.Enchantment." + enchantName + ".Level"), true);
+//                                            }
+                                            for (Enchantment enchant : item.getEnchantments().keySet()) {
+                                                config.set("Contents." + i + ".ItemMeta.Enchantment." + enchant.getName() + ".Level", item.getEnchantmentLevel(enchant));
                                             }
                                         }
                                         item.setItemMeta(meta);
