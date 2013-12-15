@@ -53,4 +53,8 @@ public class TestImage implements Runnable {
     public boolean isImage() {
         return isImage;
     }
+    
+    public File getFile() {
+        return file;
+    }
 }
