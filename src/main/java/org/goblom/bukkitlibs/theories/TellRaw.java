@@ -113,6 +113,10 @@ public class TellRaw {
         return messages;
     }
     
+    public String[] getMessagesAsArray() {
+        return messages.toArray(new String[0]);
+    }
+    
     @Override
     public String toString() {
         String message = "{";
