@@ -46,24 +46,28 @@ public class TellRaw {
         }
     }
     
-    public void addFormat(int messageIndex, Format format) {
+    public TellRaw addFormat(int messageIndex, Format format) {
         String oldMessage = messages.get(messageIndex);
         messages.set(messageIndex, oldMessage + format.getFormat() + ":" + true + ",");
+        return this;
     }
     
-    public void addColor(int messageIndex, ChatColor color) {
+    public TellRaw addColor(int messageIndex, ChatColor color) {
         String oldMessage = messages.get(messageIndex);
         messages.set(messageIndex, oldMessage + "color:" + color.name().toLowerCase() + ",");
+        return this;
     }
     
-    public void addClickEvent(int messageIndex, Action action, String value) {
+    public TellRaw addClickEvent(int messageIndex, Action action, String value) {
         String oldMessage = messages.get(messageIndex);
         messages.set(messageIndex, oldMessage + "clickEvent:{action:" + action.getAction() + ",value:'" + value + "'}");
+        return this;
     }
     
-    public void addHoverEvent(int messageIndex, Action action, String value) {
+    public TellRaw addHoverEvent(int messageIndex, Action action, String value) {
         String oldMessage = messages.get(messageIndex);
         messages.set(messageIndex, oldMessage + "hoverEvent:{action:" + action.getAction() + ",value:'" + value + "'}");
+        return this;
     }
     
     public String itemToJSON(ItemStack i) {
