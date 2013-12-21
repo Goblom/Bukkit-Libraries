@@ -27,8 +27,12 @@ package org.goblom.bukkitlibs.theories;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import net.minecraft.server.v1_7_R1.ChatSerializer;
+import net.minecraft.server.v1_7_R1.PacketPlayOutChat;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
 /**
  *
  * @author Goblom
@@ -128,5 +132,9 @@ public class TellRaw {
             }
         }
         return removeExcess(message + "}");
+    }
+    
+    public void send(Player player) {
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(toString()), true));
     }
 }
