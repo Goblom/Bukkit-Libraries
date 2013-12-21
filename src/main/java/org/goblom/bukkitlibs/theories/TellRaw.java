@@ -33,6 +33,14 @@ import org.bukkit.inventory.ItemStack;
 import net.minecraft.server.v1_7_R1.ChatSerializer;
 import net.minecraft.server.v1_7_R1.PacketPlayOutChat;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
+
+//import com.comphenix.protocol.PacketType;
+//import com.comphenix.protocol.ProtocolLibrary;
+//import com.comphenix.protocol.ProtocolManager;
+//import com.comphenix.protocol.events.PacketContainer;
+//import com.comphenix.protocol.wrappers.WrappedChatComponent;
+//import java.lang.reflect.InvocationTargetException;
+
 /**
  *
  * @author Goblom
@@ -124,6 +132,21 @@ public class TellRaw {
     public String[] getMessagesAsArray() {
         return messages.toArray(new String[0]);
     }
+        
+    public void send(Player player) {
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(toString()), true));
+    }
+    
+//    public void send(Player player) {
+//        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+//        PacketContainer messagePacket = manager.createPacket(PacketType.Play.Server.CHAT);
+//        messagePacket.getChatComponents().write(0, WrappedChatComponent.fromJson(toString()));
+//        try {
+//            manager.sendServerPacket(player, messagePacket);
+//        } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//        }
+//    }
     
     @Override
     public String toString() {
@@ -136,9 +159,5 @@ public class TellRaw {
             }
         }
         return removeExcess(message + "}");
-    }
-    
-    public void send(Player player) {
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(toString()), true));
     }
 }
