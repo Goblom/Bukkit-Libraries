@@ -50,7 +50,7 @@ public class TellRaw {
     
     public TellRaw(String... message) {
         for (String m : message) {
-            messages.add("text:'" + m + "',");
+            messages.add("text:\"" + m + "\",");
         }
     }
     
@@ -68,13 +68,13 @@ public class TellRaw {
     
     public TellRaw addClickEvent(int messageIndex, Action action, String value) {
         String oldMessage = messages.get(messageIndex);
-        messages.set(messageIndex, oldMessage + "clickEvent:{action:" + action.getAction() + ",value:'" + value + "'}");
+        messages.set(messageIndex, oldMessage + "clickEvent:{action:" + action.getAction() + ",value:\"" + value + "\"}");
         return this;
     }
     
     public TellRaw addHoverEvent(int messageIndex, Action action, String value) {
         String oldMessage = messages.get(messageIndex);
-        messages.set(messageIndex, oldMessage + "hoverEvent:{action:" + action.getAction() + ",value:'" + value + "'}");
+        messages.set(messageIndex, oldMessage + "hoverEvent:{action:" + action.getAction() + ",value:\"" + value + "\"}");
         return this;
     }
     
@@ -88,7 +88,7 @@ public class TellRaw {
             if (i.getItemMeta().hasLore()) {
                 String lores = "Lore:[";
                 for (String lore : i.getItemMeta().getLore()) {
-                    lores = "'" + lore + "'" + ",";
+                    lores = "\"" + lore + "\"" + ",";
                 }
                 json = json + lores;
             }
