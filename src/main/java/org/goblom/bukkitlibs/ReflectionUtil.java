@@ -23,6 +23,7 @@
  */
 package org.goblom.bukkitlibs;
 
+import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
 
 /**
@@ -67,6 +68,19 @@ public class ReflectionUtil {
         return clazz;
     }
 
+    public static <T> T getField(Object o, String fieldName) {
+        Class<?> checkClass = o.getClass();
+        do {
+            try {
+                Field field = checkClass.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return (T) field.get(o);
+            } catch (NoSuchFieldException e) { e.printStackTrace(); 
+            } catch (IllegalAccessException e) { e.printStackTrace(); }
+        } while (checkClass.getSuperclass() != Object.class && ((checkClass = checkClass.getSuperclass()) != null));
+        return null;
+    }
+    
     private static String getVersion() {
         return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
     }
