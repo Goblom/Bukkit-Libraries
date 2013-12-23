@@ -24,7 +24,9 @@
 package org.goblom.bukkitlibs;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
 
 /**
  * Reflection Utils for getting version dependent Classes... Currently a work in
@@ -78,6 +80,16 @@ public class ReflectionUtil {
             } catch (NoSuchFieldException e) { e.printStackTrace(); 
             } catch (IllegalAccessException e) { e.printStackTrace(); }
         } while (checkClass.getSuperclass() != Object.class && ((checkClass = checkClass.getSuperclass()) != null));
+        return null;
+    }
+    
+    public static Method getMethod(Class<?> clazz, String method) {
+        for (Method m : clazz.getMethods()) {
+            if (m.getName().equals(method)) {
+                m.setAccessible(true);
+                return m;
+            }
+        }
         return null;
     }
     
