@@ -81,7 +81,8 @@ public class Launcher {
     }
     
     public static void launchProjectile(Player player, Type type, Vector velocity) {
-        player.getWorld().spawn(player.getLocation(), type.getClazz()).setVelocity(velocity);
+        Entity ent = player.getWorld().spawn(player.getLocation(), type.getClazz());
+        ent.setVelocity(velocity);
 
         switch (type) { //do nothing yet.
             case BAT:
