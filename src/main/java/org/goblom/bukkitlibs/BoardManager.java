@@ -108,6 +108,11 @@ public class BoardManager {
         return mainObjectiveName;
     }
     
+    public void setScoreboardName(String name) {
+        mainObjective.setDisplayName(name);
+        updatePlayersOnScoreboardNameChange();
+    }
+    
     /**
      * Change the Criteria of the main Objective. WARNING will reset all data in Main Objective
      * 
@@ -139,6 +144,14 @@ public class BoardManager {
         this.slot = slot;
     }
     
+    private void updatePlayersOnScoreboardNameChange() {
+        for (String playerName : players) {
+            Player player = Bukkit.getPlayer(playerName);
+            if (player != null) {
+                player.setScoreboard(scoreBoard);
+            }
+        }
+    }
     /**
      * Simple method to check all players in the list to make sure they still
      * have this scoreboard. If they do not then remove them from the list
@@ -401,9 +414,14 @@ public class BoardManager {
         private final String name;
         private ObjectiveCriteria(String name) { this.name = name; }
         public String getName() { return name; }
-        public String getStat() { return "stat." + name; }
-        public String getStatWithID(int id) { return name + "." + id; }
-        public String getStatWithID(String stat, int id) { return "stat." + stat + "." + id; }
-        
+        public String getCriteriaWithID(int id) { return name + "." + id; }
+        public static String getStatWithID(Stat stat, int id) { return stat.getName() + "." + id; }
     }
+    
+    public enum Stat {
+            CRAFT_ITEM("stat.craftItem"), USE_ITEM("stat.useItem"), BREAK_ITEM("stat.breakItem"), MINE_BLOCK("stat.mineBlock");
+            private final String name;
+            private Stat(String name) { this.name = name; }
+            public String getName() { return name; }
+        }
 }
