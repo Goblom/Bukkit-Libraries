@@ -414,8 +414,7 @@ public class BoardManager {
         private final String name;
         private ObjectiveCriteria(String name) { this.name = name; }
         public String getName() { return name; }
-        public String getCriteriaWithID(int id) { return name + "." + id; }
-        public static String getStatWithID(Stat stat, int id) { return stat.getName() + "." + id; }
+        public static String getCriteriaWithID(ObjectiveCriteria crit, int id) { return crit.getName() + "." + id; }
     }
     
     public enum Stat {
@@ -423,5 +422,6 @@ public class BoardManager {
             private final String name;
             private Stat(String name) { this.name = name; }
             public String getName() { return name; }
+            public static String getStatWithID(Stat stat, int id) { return stat.getName() + "." + id; }
         }
 }
