@@ -108,6 +108,11 @@ public class BoardManager {
         return mainObjectiveName;
     }
     
+    /**
+     * Change the name of the scoreboard
+     * 
+     * @param name 
+     */
     public void setScoreboardName(String name) {
         mainObjective.setDisplayName(name);
         updatePlayersOnScoreboardNameChange();
@@ -126,6 +131,19 @@ public class BoardManager {
         mainObjective.setDisplaySlot(slot);
     }
     
+    /**
+     * Change the Criteria of the main Objective. WARNING will reset all data in Main Objective
+     * 
+     * @param criteria Criteria to change to
+     * @param id the block id of the stat
+     */
+    public void changeCriteria(Stat criteria, int id) {
+        this.mainObjective.unregister();
+        this.mainObjective = null;
+        this.mainObjective = scoreBoard.registerNewObjective("main", Stat.getStatWithID(criteria, id));
+        mainObjective.setDisplayName(mainObjectiveName);
+        mainObjective.setDisplaySlot(slot);
+    }
     /**
      * Slot that the scoreboard is displayed
      * 
@@ -401,15 +419,6 @@ public class BoardManager {
         stat_entityKilledBy_ZOMBIE("stat.entityKilledBy.Zombie"), stat_entityKilledBy_CHICKEN("stat.entityKilledBy.Chicken"), stat_entityKilledBy_COW("stat.entityKilledBy.Cow"), 
         stat_entityKilledBy_GHAST("stat.entityKilledBy.Ghast"), stat_entityKilledBy_HORSE("stat.entityKilledBy.EntityHorse"), // Horse ??? Wiki might be mispelled
         stat_entityKilledBy_OCELOT("stat.entityKilledBy.Ozelot") //Ocelot ??? Wiki might be mispelled
-        
-        /**
-         * Missing... http://minecraft.gamepedia.com/Scoreboard#Objectives
-         * 
-         * - stat.craftItem
-         * - stat.useItem
-         * - stat.breakItem
-         * - stat.mineBlock
-         */
         ;
         private final String name;
         private ObjectiveCriteria(String name) { this.name = name; }
