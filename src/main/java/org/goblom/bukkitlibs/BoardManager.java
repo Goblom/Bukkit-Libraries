@@ -144,6 +144,7 @@ public class BoardManager {
         mainObjective.setDisplayName(mainObjectiveName);
         mainObjective.setDisplaySlot(slot);
     }
+    
     /**
      * Slot that the scoreboard is displayed
      * 
