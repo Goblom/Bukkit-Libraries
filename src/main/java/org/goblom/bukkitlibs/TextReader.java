@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Credit to @Wizehh on bukkit forums for a original idea.
+ * Credit to @Wizehh on bukkit forums for a original idea + code.
  * http://forums.bukkit.org/threads/221682/
  * 
  * 
