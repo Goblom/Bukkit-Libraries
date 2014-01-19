@@ -43,9 +43,10 @@ public class TextReader {
     private final String link;
     private final URL url;
     private final BufferedReader in;
+    private boolean closed = false;
     private final List<String> text = new ArrayList();
     
-    public TextReader(String link) throws MalformedURLException, IOException {
+    public TextReader(String link, boolean close) throws MalformedURLException, IOException {
         this.link = link;
         this.url = new URL(link);
         this.in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -54,6 +55,11 @@ public class TextReader {
         
         while (getReader().readLine() != null) {
             this.text.add(getReader().readLine());
+        }
+        
+        if (close) {
+            in.close();
+            this.closed = true;
         }
     }
     
@@ -65,6 +71,11 @@ public class TextReader {
         return url;
     }
     
+    public void close() throws IOException {
+        if (!closed) {
+            getReader().close();
+        }
+    }
     public BufferedReader getReader() {
         return in;
     }
