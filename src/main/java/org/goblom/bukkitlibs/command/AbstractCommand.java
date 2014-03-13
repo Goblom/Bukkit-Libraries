@@ -36,7 +36,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 /**
- *
+ * For a How-To on how to use AbstractCommand see this post @ http://forums.bukkit.org/threads/195990/
+ * 
  * @author Goblom
  */
 public abstract class AbstractCommand implements CommandExecutor {
