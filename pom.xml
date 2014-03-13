@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>3.0.1</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>

@@ -72,7 +72,7 @@ public class CustomEnchantment {
 
     }
 
-    private abstract class CustomEnchant extends Enchantment {
+    public static abstract class CustomEnchant extends Enchantment {
 
         public CustomEnchant(int id) {
             super(id);
