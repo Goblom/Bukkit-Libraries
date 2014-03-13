@@ -48,7 +48,6 @@ public abstract class AbstractCommand implements CommandExecutor {
     protected final String permMessage;
 
     protected static CommandMap cmap;
-//    protected PluginCommand plgCMD;
     
     public AbstractCommand(String command) {
         this(command, null, null, null, null);
