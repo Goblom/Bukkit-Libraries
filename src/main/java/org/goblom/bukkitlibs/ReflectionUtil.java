@@ -26,7 +26,6 @@ package org.goblom.bukkitlibs;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R1.CraftServer;
 
 /**
  * Reflection Utils for getting version dependent Classes... Currently a work in
