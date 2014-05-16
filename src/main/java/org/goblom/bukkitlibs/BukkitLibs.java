@@ -24,6 +24,13 @@
 
 package org.goblom.bukkitlibs;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.goblom.bukkitlibs.command.CommandRegistrationFactory;
+
 /**
  * Just a Holder Class. Stuff will be added to this sometime in the future
  * 
@@ -31,4 +38,28 @@ package org.goblom.bukkitlibs;
  */
 public class BukkitLibs { 
     
+    public void CommandRegistrationFactoryTesting() {
+        CommandRegistrationFactory factory = new CommandRegistrationFactory();
+//                                           new CommandRegistrationFactory("command_name");
+//                                           CommandRegistrationFactory.builder();
+//                                           CommandRegistrationFactory.buildCommand("command_name");
+                                   
+                                   factory.withCommandLabel("command_name"); //Optional
+                                   factory.withAliases("alias1", "alias2", "alias3");
+                                   factory.withCommandExecutor(new CommandExecutor() {
+                                        public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+                                            cs.sendMessage("This is a dynamic command");
+                                            return true;
+                                        }
+                                   });
+                                   factory.withDescription("This is a dynamic command.");
+                                   factory.withPermission("test.permission");
+                                   factory.withPermissionMessage(ChatColor.RED + "&lYou do not have permission to use this command.");
+                                   factory.withPlugin(Bukkit.getPluginManager().getPlugin("some plugin name"));
+                                   factory.withUsage("/<command> [args]");
+                                   
+                                   factory.register();
+//                                        .build();
+        
+    }
 }
