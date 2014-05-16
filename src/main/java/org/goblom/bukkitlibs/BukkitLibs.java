@@ -29,6 +29,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.goblom.bukkitlibs.command.CommandRegistrationFactory;
 
 /**
@@ -60,6 +61,51 @@ public class BukkitLibs {
                                    
                                    factory.register();
 //                                        .build();
+                                   
+        /********************************
+         * Lets write a command
+         * 
+         * Values:
+         *      Command: /heal
+         *      Aliases: /h
+         *      Usage: /<command> <player> [amount]
+         *      Permission: heal.use
+         *      Permission Message: You do not have permission do /heal
+         */
+         CommandRegistrationFactory healCommand = CommandRegistrationFactory.buildCommand("heal");
+                                    healCommand.withAliases("h");
+                                    healCommand.withDescription("Heal a player");
+                                    healCommand.withUsage("/<command> <player> [amount]");
+                                    healCommand.withPermission("heal.use");
+                                    healCommand.withPermissionMessage("You do not have permission do do /heal");
+                                    healCommand.withCommandExecutor(new CommandExecutor() {
+                                        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+                                            if (!(sender instanceof Player)) return true;
+                                            if (args.length >= 1) {
+                                                Player toHeal = Bukkit.getPlayer(args[0]);
+                                                if (toHeal != null) {
+                                                    if (args.length >= 2) {
+                                                        try {
+                                                            toHeal.setHealth(Double.valueOf(args[1]));
+                                                            sender.sendMessage("You have healed " + toHeal.getName());
+                                                            toHeal.sendMessage("You have been healed!");
+                                                        } catch (NumberFormatException e) {
+                                                            sender.sendMessage("Health must be a number!");
+                                                        }
+                                                    } else {
+                                                        toHeal.setHealth(20.0D);
+                                                        sender.sendMessage("You have healed " + toHeal.getName());
+                                                        toHeal.sendMessage("You have been healed!");
+                                                    }
+                                                } else sender.sendMessage("That player is not online!");
+                                            } else {
+                                                ((Player) sender).setHealth(20.0D);
+                                                sender.sendMessage("You have been healed!");
+                                            }
+                                            return true;
+                                        }
+                                    });
+                                    factory.build();
         
     }
 }
