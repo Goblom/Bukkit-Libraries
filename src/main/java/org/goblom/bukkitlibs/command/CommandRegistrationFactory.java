@@ -61,10 +61,6 @@ public class CommandRegistrationFactory {
         this.commandLabel = command;
     }
 
-    public void build() {
-        register();
-    }
-
     public CommandRegistrationFactory withCommandExecutor(CommandExecutor exec) {
         this.commandExecutor = exec;
         return this;
@@ -178,7 +174,6 @@ public class CommandRegistrationFactory {
     }
 
     public class CommandNotPreparedException extends RuntimeException {
-
         public CommandNotPreparedException(String message) {
             super(message);
         }
@@ -190,5 +185,9 @@ public class CommandRegistrationFactory {
     
     public static CommandRegistrationFactory builder() {
         return new CommandRegistrationFactory();
+    }
+
+    public static CommandRegistrationFactory registerCommand(String command, CommandExecutor cmdExec) {
+        return new CommandRegistrationFactory(command).withCommandExecutor(cmdExec).register();
     }
 }
