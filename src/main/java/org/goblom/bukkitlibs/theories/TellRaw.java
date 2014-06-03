@@ -30,9 +30,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.minecraft.server.v1_7_R2.ChatSerializer;
-import net.minecraft.server.v1_7_R2.PacketPlayOutChat;
-import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
+import net.minecraft.server.v1_7_R3.ChatSerializer;
+import net.minecraft.server.v1_7_R3.PacketPlayOutChat;
+import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
 
 //import com.comphenix.protocol.PacketType;
 //import com.comphenix.protocol.ProtocolLibrary;

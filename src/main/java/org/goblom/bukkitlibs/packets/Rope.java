@@ -24,17 +24,17 @@
 
 package org.goblom.bukkitlibs.packets;
 
-import net.minecraft.server.v1_7_R2.EntityBat;
-import net.minecraft.server.v1_7_R2.EntityWitherSkull;
-import net.minecraft.server.v1_7_R2.PacketPlayOutAttachEntity;
-import net.minecraft.server.v1_7_R2.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_7_R2.PacketPlayOutSpawnEntity;
-import net.minecraft.server.v1_7_R2.PacketPlayOutSpawnEntityLiving;
-import net.minecraft.server.v1_7_R2.WorldServer;
+import net.minecraft.server.v1_7_R3.EntityBat;
+import net.minecraft.server.v1_7_R3.EntityWitherSkull;
+import net.minecraft.server.v1_7_R3.PacketPlayOutAttachEntity;
+import net.minecraft.server.v1_7_R3.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_7_R3.PacketPlayOutSpawnEntity;
+import net.minecraft.server.v1_7_R3.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_7_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
