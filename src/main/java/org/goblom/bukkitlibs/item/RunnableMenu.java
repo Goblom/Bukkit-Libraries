@@ -242,6 +242,10 @@ public class RunnableMenu {
         slots.put(slot, option);
     }
     
+    public void setOption(int slot, ItemStack item, OptionRunner runner) {
+        slots.put(slot, new MenuOption(item, runner));
+    }
+    
     public OptionBuilder buildOption(Material mat) {
         return new OptionBuilder(mat);
     }
@@ -314,6 +318,40 @@ public class RunnableMenu {
             this.runner = runner;
         }
 
+        public MenuOption(ItemStack item, OptionRunner runner) {
+            this.runner = runner;
+            this.material = item.getType();
+            this.amount = item.getAmount();
+            this.durability = item.getDurability();
+           
+            if (item.getEnchantments() != null) {
+                this.enchantments = item.getEnchantments();
+            }
+            
+            if (item.hasItemMeta()) {
+                ItemMeta meta = item.getItemMeta();
+                
+                if (meta.hasLore()) {
+                    this.lore = meta.getLore();
+                }
+                
+                if (meta.hasDisplayName()) {
+                    this.name = meta.getDisplayName();
+                }
+                
+                if (meta instanceof LeatherArmorMeta) {
+                    this.color = ((LeatherArmorMeta) meta).getColor();
+                }
+            }
+            
+            if (item.getData() instanceof Wool) {
+                try {
+                    Wool wool = (Wool) item.getData();
+                    this.dyeColor = wool.getColor();
+                } catch (Exception e) {};
+            }
+        }
+        
         public Material getMaterial() {
             return material;
         }
