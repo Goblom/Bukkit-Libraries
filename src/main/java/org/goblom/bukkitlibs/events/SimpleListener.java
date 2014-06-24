@@ -24,6 +24,9 @@
 
 package org.goblom.bukkitlibs.events;
 
+import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -34,8 +37,21 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class SimpleListener implements Listener {
     
+    private static List<SimpleListener> listeners = Lists.newArrayList();
+    
+    public static void unregisterAll() {
+        for (SimpleListener listener : listeners) {
+            listener.unregister();
+        }
+    }
+    
+    public static List<SimpleListener> getRegistered() {
+        return Collections.unmodifiableList(listeners);
+    }
+            
     public SimpleListener(Plugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        SimpleListener.listeners.add(this);
     }
     
     public void unregister() {
