@@ -25,7 +25,6 @@ package org.goblom.bukkitlibs.item;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -161,21 +160,6 @@ public class RunnableMenu {
         this.slots = null;
         this.listener = null;
         this.viewers = null;
-        
-        //Alternate route
-//        for (Field field : getClass().getFields()) {
-//            try {
-//                field.setAccessible(true);
-//                field.set(this, null);
-//            } catch (Exception e) {}
-//        }
-//        
-//        for (Field field : getClass().getDeclaredFields()) {
-//            try {
-//                field.setAccessible(true);
-//                field.set(this, null);
-//            } catch (Exception e) {}
-//        }
     }
     
     public void open(Player player) {
