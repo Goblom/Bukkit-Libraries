@@ -267,7 +267,9 @@ public class RunnableMenu {
     }
     
     public void closeViewers() {
-        
+        for (Player player : getViewers()) {
+            close(player);
+        }
     }
     
     public static abstract class OptionRunner {
