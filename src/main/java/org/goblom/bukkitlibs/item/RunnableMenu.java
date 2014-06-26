@@ -121,7 +121,27 @@ public class RunnableMenu {
                             
                             if (option.getViewPermission() != null && !option.getViewPermission().isEmpty()) {
                                 if (!player.hasPermission(option.getViewPermission())) {
-                                    return;
+                                    if (option.getInvalidPermissionOption() != null) {
+                                        if (option.getInvalidPermissionOption().getRunner() != null) {
+                                            option.getInvalidPermissionOption().getRunner().onClick(player);
+
+                                            if (option.getInvalidPermissionOption().getRunner().willClose()) {
+                                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(
+                                                        plugin, 
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                player.closeInventory();
+                                                            }
+                                                        }, 1);
+                                            }
+
+                                            if (option.getInvalidPermissionOption().getRunner().willDestroy()) {
+                                                destroy();
+                                            }
+                                        }
+                                        return;
+                                    }
                                 }
                             }
                             
@@ -170,7 +190,10 @@ public class RunnableMenu {
             
             if (option.getViewPermission() != null && !option.getViewPermission().isEmpty()) {
                 if (!player.hasPermission(option.getViewPermission())) {
-                    continue;
+                    if (option.getInvalidPermissionOption() != null) {
+                        inv.setItem(slot, option.getInvalidPermissionOption().toItem());
+                        continue;
+                    }
                 }
             }
             
@@ -290,6 +313,7 @@ public class RunnableMenu {
         private DyeColor dyeColor;
         private Color color;
         private String viewPermission;
+        private MenuOption invalidPermOption;
         
         private MenuOption() { }
 
@@ -378,6 +402,14 @@ public class RunnableMenu {
             return color;
         }
 
+        public MenuOption getInvalidPermissionOption() {
+            return invalidPermOption;
+        }
+        
+        public void setInvalidPermissionOption(MenuOption option) {
+            this.invalidPermOption = option;
+        }
+        
         public void setName(String name) {
             this.name = name;
         }
@@ -548,6 +580,11 @@ public class RunnableMenu {
             return this;
         }
 
+        public OptionBuilder withInvalidPermission(MenuOption option) {
+            option.setInvalidPermissionOption(option);
+            return this;
+        }
+        
         public MenuOption build() {
             return option;
         }
