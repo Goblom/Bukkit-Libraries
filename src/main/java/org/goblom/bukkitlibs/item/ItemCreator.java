@@ -42,7 +42,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  *
  * @author Goblom
  */
-public class Item {
+public class ItemCreator {
     
     private final Material material;
     private final short damageValue;
@@ -55,47 +55,47 @@ public class Item {
 //    private ShapedRecipe shaped;
 //    private FurnaceRecipe furnace;
     
-    public Item(Material material, int amount) {
+    public ItemCreator(Material material, int amount) {
         this(material, (short) 0, amount, null, null);
     }
     
-    public Item(Material material, short damageValue) {
+    public ItemCreator(Material material, short damageValue) {
         this(material, damageValue, 1, null, null);
     }
     
-    public Item(Material material, short damageValue, int amount) {
+    public ItemCreator(Material material, short damageValue, int amount) {
         this(material, damageValue, amount, null, null);
     }
     
-    public Item(Material material, String displayName) {
+    public ItemCreator(Material material, String displayName) {
         this(material, (short) 0, 1, displayName, null);
     }
     
-    public Item(Material material, List<String> lore) {
+    public ItemCreator(Material material, List<String> lore) {
         this(material, (short) 0, 1, null, lore);
     }
     
-    public Item(Material material, String displayName, List<String> lore) {
+    public ItemCreator(Material material, String displayName, List<String> lore) {
         this(material, (short) 0, 1, displayName, lore);
     }
     
-    public Item(Material material, short damageValue, String displayName, List<String> lore) {
+    public ItemCreator(Material material, short damageValue, String displayName, List<String> lore) {
         this(material, damageValue, 1, displayName, lore);
     }
     
-    public Item(Material material, int amount, String displayName, List<String> lore) {
+    public ItemCreator(Material material, int amount, String displayName, List<String> lore) {
         this(material, (short) 0, amount, displayName, lore);
     }
     
-    public Item(Material material, short damageValue, int amount, String displayName) {
+    public ItemCreator(Material material, short damageValue, int amount, String displayName) {
         this(material, damageValue, amount, displayName, null);
     }
     
-    public Item(Material material, short damageValue, int amount, List<String> lore) {
+    public ItemCreator(Material material, short damageValue, int amount, List<String> lore) {
         this(material, damageValue, amount, null, lore);
     }
     
-    public Item(Material material, Short damageValue, int amount, String displayName, List<String> lore) {
+    public ItemCreator(Material material, Short damageValue, int amount, String displayName, List<String> lore) {
         this.material = material;
         this.damageValue = damageValue;
         this.amount = amount;
