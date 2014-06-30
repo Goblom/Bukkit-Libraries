@@ -37,11 +37,11 @@ import org.bukkit.inventory.ItemStack;
  */
 public class AddGlow {
     
-    public AddGlow(ItemStack item) {
+    public static void makeGlow(ItemStack item) {
         item.addUnsafeEnchantment(new GlowEffect(100), 1);
     }
     
-    private final class GlowEffect extends CustomEnchantment {
+    private static final class GlowEffect extends CustomEnchantment {
         public GlowEffect(int id) { super(id); }
         @Override
         public boolean canEnchantItem(ItemStack itemstack) { return false; }
@@ -57,7 +57,7 @@ public class AddGlow {
         public int getWeight() { return 1000; }
     }
     
-    private abstract class CustomEnchantment extends Enchantment {
+    private static abstract class CustomEnchantment extends Enchantment {
         public CustomEnchantment(int id) {
             super(id);
             if (id > 256) throw new IllegalArgumentException("A enchantment id has to be lower then 256!");
