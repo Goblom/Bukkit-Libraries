@@ -37,24 +37,33 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class SimpleListener implements Listener {
     
-    private static List<SimpleListener> listeners = Lists.newArrayList();
+    private static final List<SimpleListener> listeners = Lists.newArrayList();
     
-    public static void unregisterAll() {
+    public static final void unregisterAll() {
         for (SimpleListener listener : listeners) {
             listener.unregister();
         }
     }
     
-    public static List<SimpleListener> getRegistered() {
+    public static final List<SimpleListener> getRegistered() {
         return Collections.unmodifiableList(listeners);
     }
             
+    protected Plugin plugin;
+    
     public SimpleListener(Plugin plugin) {
+        this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         SimpleListener.listeners.add(this);
+        
+        logRegister();
     }
     
-    public void unregister() {
+    protected void logRegister() {
+        plugin.getLogger().info("Registered " + getClass().getSimpleName());
+    }
+    
+    public final void unregister() {
         HandlerList.unregisterAll(this);
     }
 }
