@@ -54,7 +54,7 @@ public class Colorize {
 
         private final String toStyle;
 
-        public Stylize(String toStyle) {
+        protected Stylize(String toStyle) {
             this.toStyle = toStyle;
         }
 
@@ -76,7 +76,7 @@ public class Colorize {
             }
 
             StringBuilder sb = new StringBuilder(toStyle.length());
-            while (characters.size() != 0) {
+            while (!characters.isEmpty()) {
                 int randPicker = (int) (Math.random() * characters.size());
                 sb.append(characters.remove(randPicker));
             }
