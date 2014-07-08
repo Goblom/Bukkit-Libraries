@@ -79,6 +79,7 @@ public class ChestUtils {
                 slot = RANDOM.nextInt(size);
             }
 
+            filled.add(slot);
             inv.setItem(slot, items[i]);
         }
     }
