@@ -60,7 +60,7 @@ public class CommandItem {
             public void onPlayerInteract(PlayerInteractEvent event) {
                 ItemStack handItem = event.getItem();
                 if (handItem == null) return;
-                for (Action action : runWith) {
+                CHECK: for (Action action : runWith) {
                     if (event.getAction().equals(action)) {
                         if (handItem.isSimilar(item)) {
                             useRunner.onUse(event.getPlayer());
@@ -70,6 +70,7 @@ public class CommandItem {
                             }
                             
                             event.setCancelled(true);
+                            break CHECK;
                         }
                     }
                 }
