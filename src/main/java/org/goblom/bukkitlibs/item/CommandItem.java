@@ -40,7 +40,6 @@ import org.bukkit.plugin.Plugin;
  * @author Goblom
  */
 public class CommandItem {
-    private Plugin plugin;
     private ItemStack item;
     private UseRunner useRunner;
     private Listener listener;
@@ -50,7 +49,6 @@ public class CommandItem {
     public CommandItem(Plugin plugin, ItemStack itemStack, UseRunner runner, Action... actions) {
         Validate.notNull(runWith, "You must have an action");
         
-        this.plugin = plugin;
         this.item = itemStack;
         this.useRunner = runner;
         this.runWith = actions;
@@ -58,6 +56,7 @@ public class CommandItem {
         this.listener = new Listener() {
             @EventHandler
             public void onPlayerInteract(PlayerInteractEvent event) {
+                if (isDestroyed()) return;
                 ItemStack handItem = event.getItem();
                 if (handItem == null) return;
                 CHECK: for (Action action : runWith) {
@@ -83,7 +82,6 @@ public class CommandItem {
     public void destroy() {
         HandlerList.unregisterAll(listener);
         this.listener = null;
-        this.plugin = null;
         this.item = null;
         this.useRunner = null;
         this.runWith = null;
