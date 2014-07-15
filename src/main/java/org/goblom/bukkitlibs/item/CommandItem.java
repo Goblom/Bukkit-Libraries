@@ -47,7 +47,7 @@ public class CommandItem {
     private boolean isDestroyed = false;
     
     public CommandItem(Plugin plugin, ItemStack itemStack, UseRunner runner, Action... actions) {
-        Validate.notNull(runWith, "You must have an action");
+        Validate.notNull(actions, "You must have an action");
         
         this.item = itemStack;
         this.useRunner = runner;
