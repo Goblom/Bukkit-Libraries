@@ -55,7 +55,18 @@ import org.bukkit.plugin.Plugin;
  * @author Goblom
  */
 public class RunnableMenu {
-
+    
+    private static ItemStack INVALID_PERMS;
+    
+    static {
+        RunnableMenu.INVALID_PERMS = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8);
+        
+        ItemMeta meta = RunnableMenu.INVALID_PERMS.getItemMeta();
+                 meta.setDisplayName(ChatColor.RED + "You do not have permission to view this");
+                 
+        RunnableMenu.INVALID_PERMS.setItemMeta(meta);
+    }
+    
     private Plugin plugin;
     private Map<Integer, MenuOption> slots;
     private int size;
@@ -107,50 +118,30 @@ public class RunnableMenu {
             @EventHandler(priority = EventPriority.MONITOR)
             public void onInventoryClick(InventoryClickEvent event) {
                 Inventory inv = event.getInventory();
-                
+
                 if (inv.getTitle().equals(getName())) {
                     event.setCancelled(true);
-                    
+
                     int slot = event.getRawSlot();
                     MenuOption option = getOption(slot);
-                    
+
                     if (slot >= 0 && slot < getSize() && option != null) {
                         if (event.getWhoClicked() instanceof Player) {
                             final Player player = (Player) event.getWhoClicked();
                             OptionRunner runner = option.getRunner();
-                            
+
                             if (option.getViewPermission() != null && !option.getViewPermission().isEmpty()) {
                                 if (!player.hasPermission(option.getViewPermission())) {
-                                    if (option.getInvalidPermissionOption() != null) {
-                                        if (option.getInvalidPermissionOption().getRunner() != null) {
-                                            option.getInvalidPermissionOption().getRunner().onClick(player);
-
-                                            if (option.getInvalidPermissionOption().getRunner().willClose()) {
-                                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(
-                                                        plugin, 
-                                                        new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                player.closeInventory();
-                                                            }
-                                                        }, 1);
-                                            }
-
-                                            if (option.getInvalidPermissionOption().getRunner().willDestroy()) {
-                                                destroy();
-                                            }
-                                        }
-                                        return;
-                                    }
+                                    return;
                                 }
                             }
-                            
+
                             if (runner != null) {
                                 runner.onClick(player);
-                                
+
                                 if (runner.willClose()) {
                                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(
-                                            plugin, 
+                                            plugin,
                                             new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -158,7 +149,7 @@ public class RunnableMenu {
                                                 }
                                             }, 1);
                                 }
-                                
+
                                 if (runner.willDestroy()) {
                                     destroy();
                                 }
@@ -190,10 +181,8 @@ public class RunnableMenu {
             
             if (option.getViewPermission() != null && !option.getViewPermission().isEmpty()) {
                 if (!player.hasPermission(option.getViewPermission())) {
-                    if (option.getInvalidPermissionOption() != null) {
-                        inv.setItem(slot, option.getInvalidPermissionOption().toItem());
-                        continue;
-                    }
+                    inv.setItem(slot, RunnableMenu.INVALID_PERMS);
+                    continue;
                 }
             }
             
@@ -313,7 +302,6 @@ public class RunnableMenu {
         private DyeColor dyeColor;
         private Color color;
         private String viewPermission;
-        private MenuOption invalidPermOption;
         
         private MenuOption() { }
 
@@ -400,14 +388,6 @@ public class RunnableMenu {
 
         public Color getColor() {
             return color;
-        }
-
-        public MenuOption getInvalidPermissionOption() {
-            return invalidPermOption;
-        }
-        
-        public void setInvalidPermissionOption(MenuOption option) {
-            this.invalidPermOption = option;
         }
         
         public void setName(String name) {
@@ -577,11 +557,6 @@ public class RunnableMenu {
 
         public OptionBuilder withRunner(OptionRunner runner) {
             option.setRunner(runner);
-            return this;
-        }
-
-        public OptionBuilder withInvalidPermission(MenuOption option) {
-            option.setInvalidPermissionOption(option);
             return this;
         }
         
