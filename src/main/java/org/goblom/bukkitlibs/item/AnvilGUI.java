@@ -1,12 +1,12 @@
 package org.goblom.bukkitlibs.item;
 
 import java.util.HashMap;
-import net.minecraft.server.v1_7_R3.ContainerAnvil;
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntityPlayer;
-import net.minecraft.server.v1_7_R3.PacketPlayOutOpenWindow;
+import net.minecraft.server.v1_7_R4.ContainerAnvil;
+import net.minecraft.server.v1_7_R4.EntityHuman;
+import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutOpenWindow;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
