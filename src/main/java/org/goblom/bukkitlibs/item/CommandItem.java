@@ -26,6 +26,7 @@ package org.goblom.bukkitlibs.item;
 
 import net.minecraft.util.org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -39,7 +40,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Goblom
  */
-public class CommandItem {
+public class CommandItem {    
     private ItemStack item;
     private UseRunner useRunner;
     private Listener listener;
@@ -47,6 +48,10 @@ public class CommandItem {
     private boolean isDestroyed = false;
     
     public CommandItem(Plugin plugin, ItemStack itemStack, UseRunner runner, Action... actions) {
+        this(plugin, itemStack, runner, false, actions);
+    }
+    
+    public CommandItem(Plugin plugin, ItemStack itemStack, UseRunner runner, final boolean checkLore, Action... actions) {
         Validate.notNull(actions, "You must have an action");
         
         this.item = itemStack;
@@ -61,7 +66,7 @@ public class CommandItem {
                 if (handItem == null) return;
                 CHECK: for (Action action : runWith) {
                     if (event.getAction().equals(action)) {
-                        if (handItem.isSimilar(item)) {
+                        if (isSimilar(handItem, item, checkLore)) {
                             useRunner.onUse(event.getPlayer());
                             
                             if (useRunner.willDestroy()) {
@@ -108,5 +113,75 @@ public class CommandItem {
         }
         
         public abstract void onUse(Player player);
+    }
+    
+    //*******************************************************
+    // Item Similarity Checking
+    //*******************************************************
+    private boolean isSimilarName(ItemStack one, ItemStack two) {
+        try {
+            String N1 = strip(one.getItemMeta().getDisplayName());
+            String N2 = strip(two.getItemMeta().getDisplayName());
+            return N1.equals(N1);
+        } catch (Exception e) {}
+        return false;
+    }
+    
+    private String strip(String str) {
+        return ChatColor.stripColor(str);
+    }
+    
+    private boolean isSimilar(ItemStack one, ItemStack two, boolean checkLore) {
+        boolean name = isSimilarName(one, two);
+        boolean id = one.getTypeId() == two.getTypeId();
+        boolean dura = one.getDurability() == two.getDurability();
+        boolean lore = true;
+        if (checkLore) {
+            if (hasLore(one) && hasLore(two)) {
+                if (hasLoreSize(one) && hasLoreSize(two)) {
+                    if (getLoreSize(one) == getLoreSize(two)) {
+                        int size = getLoreSize(one);
+                        for (int i = 0; i < size; i++) {
+                            String l1 = getLoreLine(one, i);
+                            String l2 = getLoreLine(two, i);
+                            if (!l1.equals(l2)) {
+                                lore = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        lore = false;
+                    }
+                }
+            }
+        }
+        return name && id && dura && lore;
+    }
+    
+    private boolean hasLore(ItemStack item) {
+        if (item.hasItemMeta()) {
+            if (item.getItemMeta().hasLore()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private int getLoreSize(ItemStack item) {
+        if (hasLore(item)) {
+            return item.getItemMeta().getLore().size();
+        }
+        return 0;
+    }
+    
+    private boolean hasLoreSize(ItemStack item) {
+        return hasLore(item) && getLoreSize(item) >= 1;
+    }
+    
+    private String getLoreLine(ItemStack item, int index) {
+        try {
+            return item.getItemMeta().getLore().get(index); 
+        } catch (Exception e) {}
+        return "";
     }
 }
