@@ -178,6 +178,8 @@ public class QueryThread {
     private static void doQuery() {
         QueryThread.Query query = QueryThread.getFirst();
 
+        if (query == null) return;
+        
         try {
             String sql = query.getQuery();
             DataHandler handler = query.getHandler();
