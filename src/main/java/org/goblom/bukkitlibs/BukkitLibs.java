@@ -24,6 +24,10 @@
 
 package org.goblom.bukkitlibs;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -31,6 +35,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.goblom.bukkitlibs.command.CommandRegistrationFactory;
+import org.goblom.bukkitlibs.thread.QueryThread;
 
 /**
  * Just a Holder Class. Stuff will be added to this sometime in the future
@@ -38,6 +43,43 @@ import org.goblom.bukkitlibs.command.CommandRegistrationFactory;
  * @author Goblom
  */
 public class BukkitLibs { 
+    
+    public void QueryThreadTesting() {
+        Connection connection = null; //Nulling for example, you should never do this
+        
+        QueryThread.scheduleQuery(connection, "SELECT * FROM `stats` WHERE `player`='Goblom';", new QueryThread.DataHandler() {
+            private SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, K:mm a");
+            @Override
+            public void onQuery(String sql) {
+                System.out.println("Query Started On: " + sdf.format(new Date(getStartTime())));
+                System.out.println("Query Being Made: " + sql);
+            }
+            
+            @Override
+            public void onDataRecieved(boolean failed, ResultSet rs) {
+                if (failed) {
+                    //lets throw the exception
+                    throw new RuntimeException("The Query Failed At: " + sdf.format(new Date(getEndTime())), getException());
+                }
+                
+                //lets do stuff with the data
+                System.out.println("The Query Finished On: " + sdf.format(new Date(getEndTime())));
+                
+                int kills = -1, deaths = -1;
+                
+                try {
+                    kills = rs.getInt("kills");
+                    deaths = rs.getInt("deaths");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+                //do stuff with that data
+                System.out.println("Kills: " + kills);
+                System.out.println("Deaths: " + deaths);
+            }
+        });
+    }
     
     public void CommandRegistrationFactoryTesting() {
         CommandRegistrationFactory factory = new CommandRegistrationFactory();
