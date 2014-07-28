@@ -31,9 +31,10 @@ import java.util.List;
 
 /**
  * QueryThread v1.0
- * 
- * This will make threaded queries to an SQL connection and feed results through a {@link DataHandler} for you to interpret
- * 
+ *
+ * This will make threaded queries to an SQL connection and feed results through
+ * a {@link DataHandler} for you to interpret
+ *
  * @author Goblom
  */
 public class QueryThread {
@@ -41,12 +42,12 @@ public class QueryThread {
     /**
      * Keep this class entirely static
      */
-    private QueryThread() {}
-    
+    private QueryThread() { }
+
     static {
         QueryThread.thread = new SQLThread();
         QueryThread.thread.start();
-        
+
         QueryThread.toMake = Lists.newArrayList();
         QueryThread.queriesMade = 0;
         QueryThread.queriesFailed = 0;
@@ -57,7 +58,7 @@ public class QueryThread {
      * The thread task that runs all the queries
      */
     private static SQLThread thread;
-    
+
     /**
      * A List of all scheduled queries to be ran
      */
@@ -67,52 +68,57 @@ public class QueryThread {
      * A counter to count the amount of queries made... because stats
      */
     private static long queriesMade;
-    
+
     /**
      * A counter to count the amount of queries failed... because stats
      */
     private static long queriesFailed;
-    
+
     /**
-     * The amount of time the {@link QueryThread#thread} should wait before running another query task
+     * The amount of time the {@link QueryThread#thread} should wait before
+     * running another query task
      */
     private static long waitTime;
 
     /**
      * Stop the {@link SQLThread}
-     * 
-     * @param andFinishAllQueries should we run all remaining SQL queries before stopping the thread
+     *
+     * @param andFinishAllQueries should we run all remaining SQL queries before
+     * stopping the thread
      */
     public static void stopThread(boolean andFinishAllQueries) {
         QueryThread.SQLThread.instantiated = false;
-        
+
         if (andFinishAllQueries) {
             QueryThread.thread.wait = false;
-            
+
             while (!toMake.isEmpty()) {
                 doQuery();
             }
         }
-        
+
         QueryThread.thread.interrupt();
         QueryThread.thread = null;
     }
-    
+
     /**
-     * If you have stopped the thread with {@link QueryThread#stopThread(boolean)} you can use this to start the thread again
+     * If you have stopped the thread with
+     * {@link QueryThread#stopThread(boolean)} you can use this to start the
+     * thread again
      */
     public static void startThread() {
         if (QueryThread.thread != null || QueryThread.thread.hasStarted()) {
             return;
         }
-        
+
         QueryThread.thread = new SQLThread();
         QueryThread.thread.start();
     }
-    
+
     /**
-     * Set how long the {@link SQLThread} should wait before running another query task
-     * 
+     * Set how long the {@link SQLThread} should wait before running another
+     * query task
+     *
      * @param time How long the {@link SQLThread} should wait
      */
     public static void setWaitTime(long time) {
@@ -124,7 +130,7 @@ public class QueryThread {
 
     /**
      * @see QueryThread#queriesFailed
-     * 
+     *
      * @return The amount of queries that have failed
      */
     public static long queriesFailed() {
@@ -133,7 +139,7 @@ public class QueryThread {
 
     /**
      * @see QueryThread#queriesMade
-     * 
+     *
      * @return The amount of queries that have been made
      */
     public static long queriesMade() {
@@ -142,7 +148,7 @@ public class QueryThread {
 
     /**
      * How many queries are left to be ran
-     * 
+     *
      * @return The size of the query pool
      */
     public static int queryPool() {
@@ -151,19 +157,22 @@ public class QueryThread {
 
     /**
      * Schedule a query to be ran inside the {@link SQLThread} later on
-     * 
+     *
      * @param conn The SQL Connection to the sql query on
      * @param sql The SQL Query to run on the connection
-     * @param handler The {@link DataHandler} to handle the data that is received through the query.
+     * @param handler The {@link DataHandler} to handle the data that is
+     * received through the query.
      */
     public static void scheduleQuery(Connection conn, String sql, DataHandler handler) {
         QueryThread.toMake.add(new Query(conn, sql, handler));
     }
 
     /**
-     * A simple way of getting the first query of {@link QueryThread#toMake} and removing it in order to have a sort of progression
-     * 
-     * @return The first {@link Query} in {@link QueryThread#toMake} returns null if there is no query or there was an exception thrown
+     * A simple way of getting the first query of {@link QueryThread#toMake} and
+     * removing it in order to have a sort of progression
+     *
+     * @return The first {@link Query} in {@link QueryThread#toMake} returns
+     * null if there is no query or there was an exception thrown
      */
     private static Query getFirst() {
         try {
@@ -173,13 +182,16 @@ public class QueryThread {
     }
 
     /**
-     * The Method that runs the first {@link Query} in the {@link QueryThread#queryPool()}
+     * The Method that runs the first {@link Query} in the
+     * {@link QueryThread#queryPool()}
      */
     private static void doQuery() {
         QueryThread.Query query = QueryThread.getFirst();
 
-        if (query == null) return;
-        
+        if (query == null) {
+            return;
+        }
+
         try {
             String sql = query.getQuery();
             DataHandler handler = query.getHandler();
@@ -216,8 +228,8 @@ public class QueryThread {
 
         /**
          * The time that the {@link Query} started
-         * 
-         * @return 
+         *
+         * @return
          */
         public final long getStartTime() {
             return start;
@@ -225,8 +237,8 @@ public class QueryThread {
 
         /**
          * The time that {@link Query} finished
-         * 
-         * @return 
+         *
+         * @return
          */
         public final long getEndTime() {
             return end;
@@ -234,8 +246,9 @@ public class QueryThread {
 
         /**
          * The {@link SQLException} that was generated by the query if it failed
-         * 
-         * @return the {@link SQLException} that was generated if the query failed
+         *
+         * @return the {@link SQLException} that was generated if the query
+         * failed
          */
         public final SQLException getException() {
             return sqlException;
@@ -245,18 +258,21 @@ public class QueryThread {
          * @param sqlQuery The SQL query to be made on the {@link Connection}
          */
         public void onQuery(String sqlQuery) { }
-        
+
         /**
          * When the query is finished the data is fed through this
-         * 
-         * @param failed If the resultset is null or there was an {@link SQLException}
-         * @param rs The return data from the SQL query on the {@link Connection}
+         *
+         * @param failed If the resultset is null or there was an
+         * {@link SQLException}
+         * @param rs The return data from the SQL query on the
+         * {@link Connection}
          */
         public void onDataRecieved(boolean failed, ResultSet rs) { }
     }
 
     /**
-     * This is a handler class to hold all the data of a {@link QueryThread#scheduleQuery(java.sql.Connection, java.lang.String, org.goblom.bukkitlibs.thread.QueryThread.DataHandler)}
+     * This is a handler class to hold all the data of a
+     * {@link QueryThread#scheduleQuery(java.sql.Connection, java.lang.String, org.goblom.bukkitlibs.thread.QueryThread.DataHandler)}
      */
     private static class Query {
 
@@ -266,7 +282,7 @@ public class QueryThread {
 
         /**
          * Do not allow any outside forces instantiate this class
-         * 
+         *
          * @param conn The connection that is used to run the SQL query
          * @param sql The SQL Query to be made on the connection
          * @param handler The handler that is fed all the data from the Result
@@ -300,10 +316,11 @@ public class QueryThread {
     }
 
     /**
-     * The SQL Thread that runs all the {@link Query} from the {@link QueryThread#queryPool()}
+     * The SQL Thread that runs all the {@link Query} from the
+     * {@link QueryThread#queryPool()}
      */
     private static class SQLThread extends Thread {
-        
+
         /**
          * Is thread already created
          */
@@ -313,12 +330,12 @@ public class QueryThread {
          * Has thread started?
          */
         private boolean started = false;
-        
+
         /**
          * Should thread wait before running another {@link Query}
          */
         private boolean wait = true;
-        
+
         /**
          * Do not allow any outside forces instantiate this class
          */
@@ -334,13 +351,13 @@ public class QueryThread {
 
         /**
          * Check if thread has started
-         * 
+         *
          * @return true if thread has started
          */
         public boolean hasStarted() {
             return this.started;
         }
-        
+
         /**
          * Start the {@link SQLThread}
          */
@@ -349,11 +366,11 @@ public class QueryThread {
             if (this.started) {
                 throw new UnsupportedOperationException("The SQLThread is already running!");
             }
-            
+
             this.started = true;
             super.start();
         }
-        
+
         /**
          * The Task that runs all the {@link Query} and waits if told so
          */
