@@ -32,6 +32,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,7 +56,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Goblom
  */
-public class RunnableMenu {
+public class RunnableMenu implements ConfigurationSerializable {
     
     private static ItemStack INVALID_PERMS;
     
@@ -65,6 +67,10 @@ public class RunnableMenu {
                  meta.setDisplayName(ChatColor.RED + "You do not have permission to view this");
                  
         RunnableMenu.INVALID_PERMS.setItemMeta(meta);
+        
+        ConfigurationSerialization.registerClass(RunnableMenu.class);
+        ConfigurationSerialization.registerClass(MenuOption.class);
+        ConfigurationSerialization.registerClass(RunnableMenu.MenuOption.class);
     }
     
     private Plugin plugin;
@@ -268,6 +274,41 @@ public class RunnableMenu {
         }
     }
     
+    public Map<String, Object> serialize() {
+        Map<String, Object> top_level = Maps.newHashMap();
+        Map<String, Object> slots = Maps.newHashMap();
+        
+        top_level.put("Name", this.name);
+        top_level.put("Size", this.size);
+        
+        for (int slot : this.slots.keySet()) {            
+            slots.put(String.valueOf(slot), this.slots.get(slot).serialize());
+        }
+        
+        top_level.put("Slots", slots);
+        return top_level;
+    }
+    
+    public static RunnableMenu deserialize(Plugin plugin, OptionRunner runner, Map<String, Object> cerial) {
+        String name = (String) cerial.get("Name");
+        int size = (Integer) cerial.get("Size");
+        Map<String, Object> slots = (Map<String, Object>) cerial.get("Slots");
+        RunnableMenu menu = new RunnableMenu(plugin, size, name);
+        
+        for (String key : slots.keySet()) {
+            try {
+                Integer.valueOf(key);
+            } catch (Exception e) {
+                plugin.getLogger().warning("[" + RunnableMenu.class.getSimpleName() + "] Skipped Slot '" + key + "' because it wasnt a number.");
+                continue;
+            }
+            
+            menu.setOption(Integer.valueOf(key), MenuOption.deserialize(runner, (Map<String, Object>) slots.get(key)));
+        }
+        
+        return menu;
+    }
+    
     public static abstract class OptionRunner {
         private boolean close, destroy;
         
@@ -289,8 +330,8 @@ public class RunnableMenu {
         
         public abstract void onClick(Player player);
     }
-
-    public static class MenuOption {
+    
+    public static class MenuOption implements ConfigurationSerializable {
 
         private String name;
         private List<String> lore;
@@ -301,7 +342,7 @@ public class RunnableMenu {
         private short durability;
         private DyeColor dyeColor;
         private Color color;
-        private String viewPermission;
+        private String viewPermission = "";
         
         private MenuOption() { }
 
@@ -493,6 +534,68 @@ public class RunnableMenu {
 
             item.setItemMeta(meta);
             return item;
+        }
+
+        public Map<String, Object> serialize() {
+            Map<String, Object> obj = Maps.newHashMap();
+            Map<String, Object> enchants = Maps.newHashMap();
+            obj.put("Name", this.name);
+            obj.put("Lore", this.lore);
+            obj.put("Material", this.material);
+            obj.put("Amount", this.amount);
+            obj.put("Durability", this.durability);
+            if (this.material.equals(Material.WOOL)) {
+                obj.put("DyeColor", this.dyeColor);
+            }
+            if (this.material.equals(Material.LEATHER_CHESTPLATE) || this.material.equals(Material.LEATHER_HELMET) || this.material.equals(Material.LEATHER_LEGGINGS) || this.material.equals(Material.LEATHER_BOOTS)) {
+                obj.put("Color", this.color.serialize());
+            }
+            obj.put("Permission", this.viewPermission);
+            
+            for (Enchantment ench : this.enchantments.keySet()) {
+                enchants.put(ench.getName(), this.enchantments.get(ench));
+            }
+            
+            obj.put("Enchantments", enchants);
+            
+            return obj;
+        }
+        
+        public static MenuOption deserialize(OptionRunner runner, Map<String, Object> object) {
+            String name = (String) object.get("Name");
+            List<String> lore = (List<String>) object.get("Lore");
+            Material material = Material.valueOf((String) object.get("Material"));
+            int amount = (Integer) object.get("Amount");
+            short durability = (Short) object.get("Durability");
+            String permission = (String) object.get("Permission");
+            Map<Enchantment, Integer> enchants = Maps.newHashMap();
+            
+            DyeColor dyeColor = null;
+            Color color = null;
+            
+            if (object.containsKey("DyeColor")) {
+                dyeColor = DyeColor.valueOf((String) object.get("DyeColor"));
+            }
+            
+            if (object.containsKey("Color")) {
+                color = Color.deserialize((Map<String, Object>) object.get("Color"));
+            }
+            
+            for (String ench : ((Map<String, Integer>) object.get("Enchantments")).keySet()) {
+                try {
+                    enchants.put(Enchantment.getByName(ench), ((Map<String, Integer>) object.get("Enchantments")).get(ench));
+                } catch (Exception e) {}
+            }
+            
+            MenuOption option = new MenuOption(material, name, runner);
+                       option.setAmount(amount);
+                       option.setColor(color);
+                       option.setDyeColor(dyeColor);
+                       option.setDurability(durability);
+                       option.setLore(lore);
+                       option.setViewPermission(permission);
+                       
+            return option;
         }
     }
 
