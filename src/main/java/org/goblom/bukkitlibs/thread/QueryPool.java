@@ -30,28 +30,28 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * QueryThread v1.0
+ * QueryPool v1.0
  *
  * This will make threaded queries to an SQL connection and feed results through
  * a {@link DataHandler} for you to interpret
  *
  * @author Goblom
  */
-public class QueryThread {
+public class QueryPool {
 
     /**
      * Keep this class entirely static
      */
-    private QueryThread() { }
+    private QueryPool() { }
 
     static {
-        QueryThread.thread = new SQLThread();
-        QueryThread.thread.start();
+        QueryPool.thread = new SQLThread();
+        QueryPool.thread.start();
 
-        QueryThread.toMake = Lists.newArrayList();
-        QueryThread.queriesMade = 0;
-        QueryThread.queriesFailed = 0;
-        QueryThread.waitTime = 1000;
+        QueryPool.toMake = Lists.newArrayList();
+        QueryPool.queriesMade = 0;
+        QueryPool.queriesFailed = 0;
+        QueryPool.waitTime = 1000;
     }
 
     /**
@@ -87,18 +87,18 @@ public class QueryThread {
      * stopping the thread
      */
     public static void stopThread(boolean andFinishAllQueries) {
-        QueryThread.SQLThread.instantiated = false;
+        QueryPool.SQLThread.instantiated = false;
 
         if (andFinishAllQueries) {
-            QueryThread.thread.wait = false;
+            QueryPool.thread.wait = false;
 
             while (!toMake.isEmpty()) {
                 doQuery();
             }
         }
 
-        QueryThread.thread.interrupt();
-        QueryThread.thread = null;
+        QueryPool.thread.interrupt();
+        QueryPool.thread = null;
     }
 
     /**
@@ -107,12 +107,12 @@ public class QueryThread {
      * thread again
      */
     public static void startThread() {
-        if (QueryThread.thread != null || QueryThread.thread.hasStarted()) {
+        if (QueryPool.thread != null || QueryPool.thread.hasStarted()) {
             return;
         }
 
-        QueryThread.thread = new SQLThread();
-        QueryThread.thread.start();
+        QueryPool.thread = new SQLThread();
+        QueryPool.thread.start();
     }
 
     /**
@@ -125,7 +125,7 @@ public class QueryThread {
         if (time == 0) {
             return;
         }
-        QueryThread.waitTime = time;
+        QueryPool.waitTime = time;
     }
 
     /**
@@ -134,7 +134,7 @@ public class QueryThread {
      * @return The amount of queries that have failed
      */
     public static long queriesFailed() {
-        return QueryThread.queriesFailed;
+        return QueryPool.queriesFailed;
     }
 
     /**
@@ -143,7 +143,7 @@ public class QueryThread {
      * @return The amount of queries that have been made
      */
     public static long queriesMade() {
-        return QueryThread.queriesMade;
+        return QueryPool.queriesMade;
     }
 
     /**
@@ -152,7 +152,7 @@ public class QueryThread {
      * @return The size of the query pool
      */
     public static int queryPool() {
-        return QueryThread.toMake.size();
+        return QueryPool.toMake.size();
     }
 
     /**
@@ -164,7 +164,7 @@ public class QueryThread {
      * received through the query.
      */
     public static void scheduleQuery(Connection conn, String sql, DataHandler handler) {
-        QueryThread.toMake.add(new Query(conn, sql, handler));
+        QueryPool.toMake.add(new Query(conn, sql, handler));
     }
 
     /**
@@ -176,7 +176,7 @@ public class QueryThread {
      */
     private static Query getFirst() {
         try {
-            return QueryThread.toMake.remove(0);
+            return QueryPool.toMake.remove(0);
         } catch (Exception e) { }
         return null;
     }
@@ -186,7 +186,7 @@ public class QueryThread {
      * {@link QueryThread#queryPool()}
      */
     private static void doQuery() {
-        QueryThread.Query query = QueryThread.getFirst();
+        QueryPool.Query query = QueryPool.getFirst();
 
         if (query == null) {
             return;
@@ -205,17 +205,17 @@ public class QueryThread {
                 rs = conn.prepareStatement(sql).executeQuery();
             } catch (SQLException e) {
                 handler.sqlException = e;
-                QueryThread.queriesFailed++;
+                QueryPool.queriesFailed++;
             }
 
             handler.end = System.currentTimeMillis();
             handler.onDataRecieved(rs == null, rs);
         } catch (Exception e) {
-            QueryThread.queriesFailed++;
+            QueryPool.queriesFailed++;
             e.printStackTrace();
         }
 
-        QueryThread.queriesMade++;
+        QueryPool.queriesMade++;
     }
 
     /**
@@ -345,7 +345,7 @@ public class QueryThread {
                 throw new UnsupportedOperationException("The SQL Thread is already running!");
             }
 
-            QueryThread.SQLThread.instantiated = true;
+            QueryPool.SQLThread.instantiated = true;
             setName("Threaded SQL Querying");
         }
 
@@ -376,11 +376,11 @@ public class QueryThread {
          */
         @Override
         public void run() {
-            QueryThread.doQuery();
+            QueryPool.doQuery();
 
             if (this.wait) {
                 try {
-                    sleep(QueryThread.waitTime);
+                    sleep(QueryPool.waitTime);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

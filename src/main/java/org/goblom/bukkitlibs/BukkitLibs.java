@@ -35,7 +35,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.goblom.bukkitlibs.command.CommandRegistrationFactory;
-import org.goblom.bukkitlibs.thread.QueryThread;
+import org.goblom.bukkitlibs.thread.QueryPool;
 
 /**
  * Just a Holder Class. Stuff will be added to this sometime in the future
@@ -47,7 +47,7 @@ public class BukkitLibs {
     public void QueryThreadTesting() {
         Connection connection = null; //Nulling for example, you should never do this
         
-        QueryThread.scheduleQuery(connection, "SELECT * FROM `stats` WHERE `player`='Goblom';", new QueryThread.DataHandler() {
+        QueryPool.scheduleQuery(connection, "SELECT * FROM `stats` WHERE `player`='Goblom';", new QueryPool.DataHandler() {
             private SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, K:mm a");
             @Override
             public void onQuery(String sql) {
