@@ -86,7 +86,7 @@ public class SimpleTimer {
                         getRunner().onRun();
                     }
                 },
-                20, 0);
+                -1, 20);
             this.endTask = Bukkit.getScheduler().runTaskLater(plugin, 
                 new Runnable() {
                     public void run() {
