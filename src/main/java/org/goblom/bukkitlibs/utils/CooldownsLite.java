@@ -123,6 +123,10 @@ public class CooldownsLite {
             this.secondsLeft = secondsLeft;
         }
         
+        public void delete() {
+            CooldownsLite.removeCooldown(getPlayer(), getName());
+        }
+        
         public Cooldown start() {
             if (!hasStarted() && this.runner == null) {
                 this.runner = new CooldownRunner(this);
