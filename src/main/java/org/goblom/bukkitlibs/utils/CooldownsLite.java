@@ -46,9 +46,6 @@ public class CooldownsLite {
     
     public static Cooldown prepare(Player player, String cooldownName, int seconds) {
         Map<String, Cooldown> player_cooldowns = (cooldown_holder.get(player.getUniqueId()) == null ? Maps.<String, Cooldown>newHashMap() : cooldown_holder.get(player.getUniqueId()));
-        if (player_cooldowns.containsKey(cooldownName)) {
-            return player_cooldowns.get(cooldownName);
-        }
         
         Cooldown cooldown = new Cooldown();
                  cooldown.secondsLeft = seconds;
@@ -60,6 +57,13 @@ public class CooldownsLite {
         cooldown_holder.put(player.getUniqueId(), player_cooldowns);
         
         return cooldown;
+    }
+    
+    public static void removeCooldown(Player player, String cooldownName) {
+        Map<String, Cooldown> player_cooldowns = (cooldown_holder.get(player.getUniqueId()) == null ? Maps.<String, Cooldown>newHashMap() : cooldown_holder.get(player.getUniqueId()));
+        
+        player_cooldowns.remove(cooldownName);
+        cooldown_holder.put(player.getUniqueId(), player_cooldowns);
     }
     
     public static Cooldown getCooldown(Player player, String cooldownName) {
