@@ -55,7 +55,8 @@ public class Cooldowns {
                  cooldown.uuid = player.getUniqueId();
                  cooldown.name = cooldownName;
                  cooldown.started = false;
-
+                 cooldown.onlyOnline = false;
+                 
         player_cooldowns.put(cooldownName, cooldown);
         cooldown_holder.put(player.getUniqueId(), player_cooldowns);
 
@@ -100,7 +101,8 @@ public class Cooldowns {
         private boolean started;
         private String name;
         private CooldownRunner runner;
-
+        private boolean onlyOnline;
+        
         private Cooldown() {
         }
 
@@ -124,10 +126,18 @@ public class Cooldowns {
             return this.started;
         }
 
+        public boolean onlyCountdownIfOnline() {
+            return this.onlyOnline;
+        }
+        
         public void setSecondsLeft(int secondsLeft) {
             this.secondsLeft = secondsLeft;
         }
 
+        public void onlyCountdownWhenOnline(boolean b) {
+            this.onlyOnline = b;
+        }
+        
         public void delete() {
             Cooldowns.removeCooldown(getPlayer(), getName());
         }
@@ -168,6 +178,12 @@ public class Cooldowns {
                 return;
             }
 
+            if (cooldown.onlyOnline) {
+                if (cooldown.getPlayer() == null) {
+                    return;
+                }
+            }
+            
             cooldown.secondsLeft--;
         }
     }
