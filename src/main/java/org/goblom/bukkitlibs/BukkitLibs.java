@@ -82,12 +82,9 @@ public class BukkitLibs {
     }
     
     public void CommandRegistrationFactoryTesting() {
-        CommandRegistrationFactory factory = new CommandRegistrationFactory();
-//                                           new CommandRegistrationFactory("command_name");
-//                                           CommandRegistrationFactory.builder();
+        CommandRegistrationFactory factory = new CommandRegistrationFactory("command_name");
 //                                           CommandRegistrationFactory.buildCommand("command_name");
                                    
-                                   factory.withCommandLabel("command_name"); //Optional
                                    factory.withAliases("alias1", "alias2", "alias3");
                                    factory.withCommandExecutor(new CommandExecutor() {
                                         public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {

@@ -32,15 +32,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
+import org.bukkit.command.TabExecutor;
 
 /**
  * For a How-To on how to use AbstractCommand see this post @ http://forums.bukkit.org/threads/195990/
  * 
  * @author Goblom
  */
-public abstract class AbstractCommand implements CommandExecutor {
+public abstract class AbstractCommand implements CommandExecutor, TabExecutor {
     
     protected final String command;
     protected final String description;
@@ -101,20 +100,19 @@ public abstract class AbstractCommand implements CommandExecutor {
     }
     
     private final class ReflectCommand extends Command {
-        private CommandExecutor exe = null;
+        private AbstractCommand exe = null;
         protected ReflectCommand(String command) { super(command); }
-        public void setExecutor(CommandExecutor exe) { this.exe = exe; }
-        public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-            if (exe != null) { exe.onCommand(sender, this, commandLabel, args); }
+        public void setExecutor(AbstractCommand exe) { this.exe = exe; }
+        @Override public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+            if (exe != null) { return exe.onCommand(sender, this, commandLabel, args); }
             return false;
         }
+        
+        @Override  public List<String> tabComplete(CommandSender sender, String alais, String[] args) {
+            if (exe != null) { return exe.onTabComplete(sender, this, alais, args); }
+            return null;
+        }
     }
-    
-    public boolean isPlayer(CommandSender sender) { return (sender instanceof Player); }
-    public boolean isAuthorized(CommandSender sender, String permission) { return sender.hasPermission(permission); }
-    public boolean isAuthorized(Player player, String permission) { return player.hasPermission(permission); }
-    public boolean isAuthorized(CommandSender sender, Permission perm) { return sender.hasPermission(perm); }
-    public boolean isAuthorized(Player player, Permission perm) { return player.hasPermission(perm); }
     
     public abstract boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
     

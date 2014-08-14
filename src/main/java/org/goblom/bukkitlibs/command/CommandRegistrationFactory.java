@@ -33,6 +33,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -53,9 +54,7 @@ public class CommandRegistrationFactory {
     private String permissionMessage;
     private String fromPlugin;
     private CommandExecutor commandExecutor;
-
-    public CommandRegistrationFactory() {
-    }
+    private TabExecutor tabExecutor;
 
     public CommandRegistrationFactory(String command) {
         this.commandLabel = command;
@@ -99,9 +98,9 @@ public class CommandRegistrationFactory {
         this.description = description;
         return this;
     }
-
-    public CommandRegistrationFactory withCommandLabel(String label) {
-        this.commandLabel = label;
+    
+    public CommandRegistrationFactory withTabExecutor(TabExecutor tab) {
+        this.tabExecutor = tab;
         return this;
     }
     
@@ -137,6 +136,10 @@ public class CommandRegistrationFactory {
             command.setUsage(this.usage);
         }
 
+        if (this.tabExecutor != null) {
+            command.setTabExecutor(this.tabExecutor);
+        }
+        
         getCommandMap().register((this.fromPlugin != null ? this.fromPlugin : ""), command);
         command.setExecutor(this.commandExecutor);
     }
@@ -160,20 +163,34 @@ public class CommandRegistrationFactory {
     private final class ReflectCommand extends Command {
 
         private CommandExecutor exe = null;
-
+        private TabExecutor tab = null;
+        
         protected ReflectCommand(String command) {
             super(command);
         }
 
-        public void setExecutor(CommandExecutor exe) {
+        private void setExecutor(CommandExecutor exe) {
             this.exe = exe;
         }
+        
+        private void setTabExecutor(TabExecutor tab) {
+            this.tab = tab;
+        }
 
+        @Override
         public boolean execute(CommandSender sender, String commandLabel, String[] args) {
             if (exe != null) {
-                exe.onCommand(sender, this, commandLabel, args);
+                return exe.onCommand(sender, this, commandLabel, args);
             }
             return false;
+        }
+        
+        @Override
+        public List<String> tabComplete(CommandSender sender, String commandLabel, String[] args) {
+            if (tab != null) {
+                return tab.onTabComplete(sender, this, usage, args);
+            }
+            return null;
         }
     }
 
@@ -186,9 +203,5 @@ public class CommandRegistrationFactory {
 
     public static CommandRegistrationFactory buildCommand(String command) {
         return new CommandRegistrationFactory(command);
-    }
-    
-    public static CommandRegistrationFactory builder() {
-        return new CommandRegistrationFactory();
     }
 }

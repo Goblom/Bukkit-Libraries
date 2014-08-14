@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
+import org.goblom.bukkitlibs.enchantment.AbstractEnchantment;
 
 /**
  * Make items glow without having those nasty Enchantment Names on the items
@@ -41,7 +42,7 @@ public class AddGlow {
         item.addUnsafeEnchantment(new GlowEffect(100), 1);
     }
     
-    private static final class GlowEffect extends CustomEnchantment {
+    private static final class GlowEffect extends AbstractEnchantment {
         public GlowEffect(int id) { super(id); }
         @Override
         public boolean canEnchantItem(ItemStack itemstack) { return false; }
@@ -56,27 +57,5 @@ public class AddGlow {
         @Override
         public int getWeight() { return 1000; }
     }
-    
-    private static abstract class CustomEnchantment extends Enchantment {
-        public CustomEnchantment(int id) {
-            super(id);
-            if (id > 256) throw new IllegalArgumentException("A enchantment id has to be lower then 256!");
-            try {
-                Field f = Enchantment.class.getDeclaredField("acceptingNew");
-                f.setAccessible(true);
-                boolean bool = f.getBoolean(null);
-                f.set(null, bool);
-                Enchantment.registerEnchantment(this);
-                f.set(null, bool);
-            } catch (Exception e) { e.printStackTrace(); }
-        }
-        public abstract boolean canEnchantItem(ItemStack item);
-        public abstract boolean conflictsWith(Enchantment enchant);
-        public abstract EnchantmentTarget getItemTarget();
-        public abstract int getMaxLevel();
-        public abstract int getStartLevel();
-        public abstract int getWeight();
-        @Override
-        public String getName() { return "Usages" + this.getId(); }
-    }
+
 }

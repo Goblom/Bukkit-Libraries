@@ -40,7 +40,6 @@ public class TestImage implements Runnable {
     
     public TestImage(File file) {
         this.file = file; 
-        run();
     }
     
     public void run() {

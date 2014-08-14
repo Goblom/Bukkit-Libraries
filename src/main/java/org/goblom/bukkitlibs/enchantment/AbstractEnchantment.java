@@ -23,6 +23,7 @@
  */
 package org.goblom.bukkitlibs.enchantment;
 
+import java.lang.reflect.Field;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
@@ -31,40 +32,40 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Goblom
  */
-public class CustomEnchantment extends AbstractEnchantment {
+public abstract class AbstractEnchantment extends Enchantment {
 
-    public CustomEnchantment(int id) {
+    public AbstractEnchantment(int id) {
         super(id);
+
+        if (id > 256) {
+            throw new IllegalArgumentException("An enchantment id has to be lower then 256!");
+        }
+
+        try {
+            Field f = Enchantment.class.getDeclaredField("acceptingNew");
+            f.setAccessible(true);
+            f.set(null, Boolean.valueOf(true));
+            Enchantment.registerEnchantment(this);
+            f.set(null, f.getBoolean(null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    public abstract boolean canEnchantItem(ItemStack item);
+
+    public abstract boolean conflictsWith(Enchantment enchantment);
+
+    public abstract EnchantmentTarget getItemTarget();
+
+    public abstract int getMaxLevel();
+
+    public abstract int getStartLevel();
+
+    public abstract int getWeight();
 
     @Override
-    public boolean canEnchantItem(ItemStack itemstack) {
-        return false;
+    public String getName() {
+        return "Usages" + this.getId();
     }
-
-    @Override
-    public boolean conflictsWith(Enchantment enchantment) {
-        return false;
-    }
-
-    @Override
-    public EnchantmentTarget getItemTarget() {
-        return EnchantmentTarget.ALL;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
-    }
-
-    @Override
-    public int getStartLevel() {
-        return 1;
-    }
-
-    @Override
-    public int getWeight() {
-        return 1000;
-    }
-
 }

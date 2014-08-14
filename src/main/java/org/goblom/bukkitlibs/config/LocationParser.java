@@ -62,11 +62,6 @@ public class LocationParser {
         } else return world + splitBy + x + splitBy + y + splitBy + z + splitBy + yaw + splitBy + pitch;
     }
     
-    public List<Location> getBetweenTwoPoints(Location loc1, Location loc2) {
-        List<Location> locations = new ArrayList<Location>();        
-        return locations;
-    }
-    
     public boolean isInside(Location checkInside, Location corner1, Location corner2) {
         int x1 = Math.min(corner1.getBlockX(), corner2.getBlockX());
         int y1 = Math.min(corner1.getBlockY(), corner2.getBlockY());

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Config Manager v1
@@ -40,7 +41,8 @@ import org.bukkit.plugin.Plugin;
  */
 public class ConfigManager {
 
-    public static Map<String, FileConfiguration> configs = new HashMap();
+    private static final Plugin PLUGIN = JavaPlugin.getProvidingPlugin(ConfigManager.class);
+    private static Map<String, FileConfiguration> configs = new HashMap();
 
     /**
      * Checks to see if the ConfigManager knows about fileName
@@ -59,11 +61,11 @@ public class ConfigManager {
      * Plugins folder
      * @param fileName File to load
      */
-    public static void load(Plugin plugin, String fileName) {
-        File file = new File(plugin.getDataFolder(), fileName);
+    public static void load(String fileName) {
+        File file = new File(PLUGIN.getDataFolder(), fileName);
         if (!file.exists()) {
             try {
-                plugin.saveResource(fileName, false);
+                PLUGIN.saveResource(fileName, false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -170,8 +172,8 @@ public class ConfigManager {
      * @param plugin Plugin to get the File from
      * @param fileName File to reload
      */
-    public static void reload(Plugin plugin, String fileName) {
-        File file = new File(plugin.getDataFolder(), fileName);
+    public static void reload(String fileName) {
+        File file = new File(PLUGIN.getDataFolder(), fileName);
         if (isFileLoaded(fileName)) {
             try {
                 configs.get(fileName).load(file);
@@ -187,8 +189,8 @@ public class ConfigManager {
      * @param plugin Plugin dir to save to the file to
      * @param fileName File to save
      */
-    public static void save(Plugin plugin, String fileName) {
-        File file = new File(plugin.getDataFolder(), fileName);
+    public static void save(String fileName) {
+        File file = new File(PLUGIN.getDataFolder(), fileName);
         if (isFileLoaded(fileName)) {
             try {
                 configs.get(fileName).save(file);
