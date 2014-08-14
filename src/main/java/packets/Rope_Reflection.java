@@ -80,7 +80,7 @@ public class Rope_Reflection {
             deSpawn(player);
         }
     }
-    @Deprecated
+
     public void spawn(Player player) {
         makeEntity();
         
@@ -106,7 +106,6 @@ public class Rope_Reflection {
         }
     }
     
-    @Deprecated
     public void deSpawn(Player player) {
         try {
             Class<?> PacketPlayOutEntityDestroy = getNMSClass("PacketPlayOutEntityDestroy");
