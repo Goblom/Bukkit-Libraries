@@ -42,17 +42,17 @@ import org.bukkit.entity.Player;
  *
  * @author Goblom
  */
-public class Rope {
+public class Rope_NMS {
  
     private Location loc_start, loc_end;
     private EntityWitherSkull ent_start, ent_end;
     private EntityBat ent_bat_start, ent_bat_end;
  
-    public Rope(Location start, Location end) {
+    public Rope_NMS(Location start, Location end) {
         this(start, end, true);
     }
  
-    public Rope(Location start, Location end, boolean spawn) {
+    public Rope_NMS(Location start, Location end, boolean spawn) {
         this.loc_start = start;
         this.loc_end = end;
         
