@@ -42,9 +42,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -461,6 +463,8 @@ public class SimpleEbean {
         return this.databaseClasses;
     }
     
+    @Entity
+    @Table(name = "example_table")
     public static class Example {
         
         @Id
