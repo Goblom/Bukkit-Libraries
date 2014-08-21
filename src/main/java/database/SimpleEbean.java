@@ -41,6 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -454,5 +459,67 @@ public class SimpleEbean {
 
     public List<Class<?>> getDatabaseClasses() {
         return this.databaseClasses;
+    }
+    
+    public static class Example {
+        
+        @Id
+        @Column(unique = true, updatable = false)
+        @GeneratedValue( strategy = GenerationType.IDENTITY )
+        private String uuid;
+        
+        @Column(updatable = true)
+        private int kills;
+        
+        @Column(updatable = true)
+        private int deaths;
+        
+        public String getUuid() {
+            return this.uuid;
+        }
+        
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
+        
+        public int getKills() {
+            return this.kills;
+        }
+        
+        public void setKills(int kills) {
+            this.kills = kills;
+        }
+        
+        public int getDeaths() {
+            return this.deaths;
+        }
+        
+        public void setDeaths(int deaths) {
+            this.deaths = deaths;
+        }
+        
+        public void save() {
+            //this will be null for example, but it should not be when using in production
+            SimpleEbean database = null;
+            boolean save = false;
+            String uuid = Bukkit.getPlayer("Goblom").getUniqueId().toString();
+            
+            Example example = database.getDatabase().find(Example.class).where().idEq(uuid).findUnique();
+            
+            if (example == null) {
+                example = new Example();
+                example.setUuid(uuid);
+                save = true;
+            }
+            
+            example.setKills(this.getKills());
+            example.setDeaths(this.getDeaths());
+            
+            if (save) {
+                database.getDatabase().save(example);
+            } else {
+                database.getDatabase().update(example);
+            }
+        }
     }
 }
