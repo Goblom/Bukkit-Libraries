@@ -91,24 +91,11 @@ public class Performance {
     
     private static class PerformanceHolder {
         private static int MAX_SIZE = 50;
-        private static Method POLL;
         
-        private List<Double> list = Lists.newLinkedList();
+        private LinkedList<Double> list = Lists.newLinkedList();
         
-        static {
-            try {
-                POLL = LinkedList.class.getMethod("poll");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        private void poll() {
-            try {
-                POLL.invoke(list);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        private Double poll() {
+            return list.poll();
         }
         
         private void add(double item) {
