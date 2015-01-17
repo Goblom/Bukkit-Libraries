@@ -177,8 +177,7 @@ public class Regeneration {
 
         @Override
         public void run() {
-            getLocation().getBlock().setType(getState().getType());
-            getLocation().getBlock().setData(getState().getBlock().getData());
+            getState().update(true, false);
 
             finish();
         }
